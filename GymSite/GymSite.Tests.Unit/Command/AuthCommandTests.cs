@@ -1,0 +1,184 @@
+﻿using GymSite.Application.Auth.Abstractions;
+using GymSite.Application.Auth.Commands;
+using GymSite.Application.Response.Abstractions;
+using GymSite.Database.User;
+using GymSite.Domain.Entity;
+using GymSite.Models.Response;
+using GymSite.Models.User.Response;
+using Microsoft.AspNetCore.Identity;
+using Moq;
+using System.IdentityModel.Tokens.Jwt;
+
+namespace GymSite.Tests.Unit.Command
+{
+    [TestFixture]
+    public class AuthCommandTests
+    {
+        private static Mock<UserManager<ApplicationUser>> MockUserManager()
+        {
+            var store = new Mock<IUserStore<ApplicationUser>>();
+            var mgr = new Mock<UserManager<ApplicationUser>>(store.Object, null, null, null, null, null, null, null, null);
+            mgr.Object.UserValidators.Add(new UserValidator<ApplicationUser>());
+            mgr.Object.PasswordValidators.Add(new PasswordValidator<ApplicationUser>());
+
+            return mgr;
+        }
+
+        [Test]
+        public async Task LoginCommand_Success()
+        {
+            var user = new ApplicationUser { Id = "id", UserName = "username", Email = "email@email.com" };
+            const string Password = "password";
+
+            var userManagerMock = MockUserManager();
+
+            userManagerMock.Setup(x => x.CheckPasswordAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>()))
+                .ReturnsAsync((ApplicationUser givenUser, string password)
+                    => user.UserName == givenUser.UserName && Password == password);
+
+            var responseFactoryMock = new Mock<IResponseFactory>();
+            responseFactoryMock.Setup(x => x.CreateSuccess(It.IsAny<ResponseCode>(), It.IsAny<string>(), It.IsAny<LoginResponse>()))
+                .Returns((ResponseCode code, string message, LoginResponse data) 
+                    => new DataResponseModel<LoginResponse>
+                    {
+                        Data = data,
+                        Code = code,
+                        Errors = null,
+                        Message = message,
+                        Success = true
+                    }
+                );
+
+            var userRepositoryMock = new Mock<IUserRepository>();
+            userRepositoryMock.Setup(x => x.GetUserByNameAsync(It.IsAny<string>(), It.IsAny<Func<ApplicationUser, ApplicationUser>>()))
+                .ReturnsAsync(user);
+
+            var authServiceMock = new Mock<IAuthService>();
+            authServiceMock.Setup(x => x.CreateToken(It.IsAny<ApplicationUser>()))
+                .ReturnsAsync(new JwtSecurityToken());
+
+            var command = new LoginCommand
+            {
+                Password = "password",
+                Username = "username",
+            };
+
+            var handler = new LoginHandler(userManagerMock.Object, responseFactoryMock.Object,
+                authServiceMock.Object, userRepositoryMock.Object);
+
+            var res = await handler.Handle(command, new CancellationToken());
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(res.Success);
+                Assert.That(res.Code, Is.EqualTo(ResponseCode.Ok));
+                Assert.That(res.Data.AuthToken, Is.Not.Empty);
+                Assert.That(res.Data.UserId, Is.Not.Empty);
+            });
+        }
+
+        [Test]
+        public async Task LoginCommand_Fail_PasswordIncorrect()
+        {
+            var user = new ApplicationUser { Id = "id", UserName = "username", Email = "email@email.com" };
+            const string Password = "password";
+
+            var userManagerMock = MockUserManager();
+
+            userManagerMock.Setup(x => x.CheckPasswordAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>()))
+                .ReturnsAsync((ApplicationUser givenUser, string password)
+                    => user.UserName == givenUser.UserName && Password == password);
+
+            var responseFactoryMock = new Mock<IResponseFactory>();
+            responseFactoryMock.Setup(x => x.CreateFail<LoginResponse>(It.IsAny<ResponseCode>(), It.IsAny<string>(), null))
+                .Returns((ResponseCode code, string message, LoginResponse data)
+                    => new DataResponseModel<LoginResponse>
+                    {
+                        Data = null,
+                        Code = code,
+                        Errors = null,
+                        Message = message,
+                        Success = false
+                    }
+                );
+
+            var userRepositoryMock = new Mock<IUserRepository>();
+            userRepositoryMock.Setup(x => x.GetUserByNameAsync(It.IsAny<string>(), It.IsAny<Func<ApplicationUser, ApplicationUser>>()))
+                .ReturnsAsync(user);
+
+            var authServiceMock = new Mock<IAuthService>();
+            authServiceMock.Setup(x => x.CreateToken(It.IsAny<ApplicationUser>()))
+                .ReturnsAsync(new JwtSecurityToken());
+
+            var command = new LoginCommand
+            {
+                Password = "passw",
+                Username = "username",
+            };
+
+            var handler = new LoginHandler(userManagerMock.Object, responseFactoryMock.Object,
+                authServiceMock.Object, userRepositoryMock.Object);
+
+            var res = await handler.Handle(command, new CancellationToken());
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(!res.Success);
+                Assert.That(res.Code, Is.EqualTo(ResponseCode.BadRequest));
+                Assert.That(res.Data, Is.Null);
+            });
+        }
+
+        [Test]
+        public async Task LoginCommand_Fail_UserNameIncorrect()
+        {
+            ApplicationUser user = null;
+            const string Password = "password";
+
+            var userManagerMock = MockUserManager();
+
+            userManagerMock.Setup(x => x.CheckPasswordAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>()))
+                .ReturnsAsync((ApplicationUser givenUser, string password)
+                    => user.UserName == givenUser.UserName && Password == password);
+
+            var responseFactoryMock = new Mock<IResponseFactory>();
+            responseFactoryMock.Setup(x => x.CreateFail<LoginResponse>(It.IsAny<ResponseCode>(), It.IsAny<string>(), null))
+                .Returns((ResponseCode code, string message, LoginResponse data)
+                    => new DataResponseModel<LoginResponse>
+                    {
+                        Data = null,
+                        Code = code,
+                        Errors = null,
+                        Message = message,
+                        Success = false
+                    }
+                );
+
+            var userRepositoryMock = new Mock<IUserRepository>();
+            userRepositoryMock.Setup(x => x.GetUserByNameAsync(It.IsAny<string>(), It.IsAny<Func<ApplicationUser, ApplicationUser>>()))
+                .ReturnsAsync(user);
+
+            var authServiceMock = new Mock<IAuthService>();
+            authServiceMock.Setup(x => x.CreateToken(It.IsAny<ApplicationUser>()))
+                .ReturnsAsync(new JwtSecurityToken());
+
+            var command = new LoginCommand
+            {
+                Password = "password",
+                Username = "user",
+            };
+
+            var handler = new LoginHandler(userManagerMock.Object, responseFactoryMock.Object,
+                authServiceMock.Object, userRepositoryMock.Object);
+
+            var res = await handler.Handle(command, new CancellationToken());
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(!res.Success);
+                Assert.That(res.Code, Is.EqualTo(ResponseCode.BadRequest));
+                Assert.That(res.Data, Is.Null);
+            });
+        }
+    }
+}
