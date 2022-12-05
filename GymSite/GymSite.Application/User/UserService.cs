@@ -64,9 +64,18 @@ namespace GymSite.Application.User
             return _responseFactory.CreateSuccess(ResponseCode.Ok, "", user);
         }
 
-        public Task<ResponseModel> UpdateUser(UpdateUserRequest request, string userId)
+        public async Task<ResponseModel> UpdateUser(UpdateUserRequest request, string userId)
         {
-            throw new NotImplementedException();
+            var user = await _userRepository.GetUserByIdAsync(userId, user => user);
+
+            user.NickName = request.NickName ?? user.NickName;
+            user.UserInfo.FirstName = request.FirstName ?? user.UserInfo.FirstName;
+            user.UserInfo.LastName = request.LastName ?? user.UserInfo.LastName;
+            user.UserInfo.Gender = request.Gender ?? user.UserInfo.Gender;
+
+            await _userRepository.UpdateUser(user);
+
+            return _responseFactory.CreateSuccess(ResponseCode.NoContent, "");
         }
     }
 }

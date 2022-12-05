@@ -1,4 +1,6 @@
-﻿namespace GymSite.Database.User
+﻿using Microsoft.EntityFrameworkCore;
+
+namespace GymSite.Database.User
 {
     [Implementation(typeof(IUserRepository))]
     public class UserRepository : IUserRepository
@@ -11,16 +13,20 @@
         }
 
         public Task<T> GetUserByIdAsync<T>(string id, Func<ApplicationUser, T> selector)
-        {
-            throw new NotImplementedException();
-        }
+            => Task.FromResult(_dbContext.Users
+                .Include(user => user.UserInfo)
+                .Where(user => user.Id == id)
+                .Select(selector)
+                .FirstOrDefault());
 
         public Task<T> GetUserByNameAsync<T>(string username, Func<ApplicationUser, T> selector)
-            => Task.FromResult(_dbContext.Users.Where(user => user.UserName== username).Select(selector).FirstOrDefault());
+            => Task.FromResult(_dbContext.Users.Where(user => user.UserName == username).Select(selector).FirstOrDefault());
 
         public Task UpdateUser(ApplicationUser user)
         {
-            throw new NotImplementedException();
+            _dbContext.Users.Update(user);
+            
+            return Task.CompletedTask;
         }
     }
 }

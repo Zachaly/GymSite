@@ -1,5 +1,6 @@
 ﻿using GymSite.Application.Auth.Abstractions;
 using GymSite.Application.User.Abstractions;
+using GymSite.Database.User;
 using GymSite.Models.Response;
 using GymSite.Models.User.Request;
 using MediatR;
@@ -21,9 +22,11 @@ namespace GymSite.Application.User.Commands
             _authService = authService;
         }
 
-        public Task<ResponseModel> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
+        public async Task<ResponseModel> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            var id = await _authService.GetCurrentUserId();
+
+            return await _userService.UpdateUser(request, id);
         }
     }
 }

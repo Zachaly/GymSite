@@ -3,11 +3,13 @@ using GymSite.Application.User;
 using GymSite.Application.User.Abstractions;
 using GymSite.Database.User;
 using GymSite.Domain.Entity;
+using GymSite.Domain.Enum;
 using GymSite.Models.Response;
 using GymSite.Models.User;
 using GymSite.Models.User.Request;
 using Microsoft.AspNetCore.Identity;
 using Moq;
+using NUnit.Framework.Constraints;
 
 namespace GymSite.Tests.Unit.Service
 {
@@ -107,7 +109,14 @@ namespace GymSite.Tests.Unit.Service
 
             var factoryMock = new Mock<IUserFactory>();
             factoryMock.Setup(x => x.CreateModel(It.IsAny<ApplicationUser>()))
-                .Returns((ApplicationUser user) => new UserModel { NickName = user.NickName });
+                .Returns((ApplicationUser user) => new UserModel 
+                    { 
+                        NickName = user.NickName,
+                        Created = "",
+                        FirstName = "",
+                        LastName = "",
+                        Gender = 0
+                    });
 
             var responseFactoryMock = new Mock<IResponseFactory>();
             responseFactoryMock.Setup(x => x.CreateSuccess(It.IsAny<ResponseCode>(), It.IsAny<string>(), It.IsAny<UserModel>()))
@@ -120,9 +129,13 @@ namespace GymSite.Tests.Unit.Service
                 });
 
             var userRepositoryMock = new Mock<IUserRepository>();
-
+            userRepositoryMock.Setup(x => x.GetUserByIdAsync(It.IsAny<string>(), It.IsAny<Func<ApplicationUser, UserModel>>()))
+                .ReturnsAsync((string id, Func<ApplicationUser, UserModel> selector)
+                    => new UserModel { NickName = userList.FirstOrDefault(x => x.Id == id).NickName });
 
             var service = new UserService(repositoryMock.Object, managerMock.Object, factoryMock.Object, responseFactoryMock.Object, userRepositoryMock.Object);
+
+            var t = factoryMock.Object.CreateModel(userList[1]);
 
             const string Id = "id2";
 
@@ -137,7 +150,7 @@ namespace GymSite.Tests.Unit.Service
         }
 
         [Test]
-        public async Task UpdateUser()
+        public async Task UpdateUser_FullContentRequest()
         {
             var userList = new List<ApplicationUser>
             {
@@ -191,6 +204,72 @@ namespace GymSite.Tests.Unit.Service
                 Assert.That(user.UserInfo.Gender, Is.EqualTo(request.Gender));
                 Assert.That(user.UserInfo.FirstName, Is.EqualTo(request.FirstName));
                 Assert.That(user.UserInfo.LastName, Is.EqualTo(request.LastName));
+            });
+        }
+
+        [Test]
+        public async Task UpdateUser_AllNullContentRequest()
+        {
+            var userList = new List<ApplicationUser>
+            {
+                new ApplicationUser {Id = "id1", UserName = "name1", NickName = "nick1", UserInfo = new UserInfo() },
+                new ApplicationUser {
+                    Id = "id2",
+                    UserName = "name2",
+                    NickName = "nick2",
+                    UserInfo = new UserInfo
+                    {
+                        FirstName = "fname",
+                        LastName = "lname",
+                        Gender = Gender.Male,
+                    }},
+                new ApplicationUser {Id = "id3", UserName = "name3", NickName = "nick3", UserInfo = new UserInfo() },
+            };
+
+            var managerMock = MockUserManager();
+
+            var repositoryMock = new Mock<IUserInfoRepository>();
+
+            var factoryMock = new Mock<IUserFactory>();
+
+            var responseFactoryMock = new Mock<IResponseFactory>();
+            responseFactoryMock.Setup(x => x.CreateSuccess(It.IsAny<ResponseCode>(), It.IsAny<string>()))
+                .Returns((ResponseCode code, string message) => new ResponseModel
+                {
+                    Success = true,
+                    Code = code,
+                    Message = message,
+                });
+
+            var userRepositoryMock = new Mock<IUserRepository>();
+            userRepositoryMock.Setup(x => x.UpdateUser(It.IsAny<ApplicationUser>()));
+            userRepositoryMock.Setup(x => x.GetUserByIdAsync(It.IsAny<string>(), It.IsAny<Func<ApplicationUser, ApplicationUser>>()))
+                .Returns((string id, Func<ApplicationUser, ApplicationUser> selector)
+                    => Task.FromResult(userList.FirstOrDefault(x => x.Id == id)));
+
+
+            var service = new UserService(repositoryMock.Object, managerMock.Object, factoryMock.Object, responseFactoryMock.Object, userRepositoryMock.Object);
+
+            const string Id = "id2";
+            var request = new UpdateUserRequest();
+
+            var user = userList.FirstOrDefault(x => x.Id == Id);
+
+            var OldNick = user.NickName;
+            var OldFName = user.UserInfo.FirstName;
+            var OldLName = user.UserInfo.LastName;
+            var OldGender = user.UserInfo.Gender;
+
+            var res = await service.UpdateUser(request, Id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(res.Success);
+                Assert.That(res.Code, Is.EqualTo(ResponseCode.NoContent));
+                Assert.That(user.NickName, Is.EqualTo(OldNick));
+                Assert.That(user.UserInfo.Gender, Is.EqualTo(OldGender));
+                Assert.That(user.UserInfo.FirstName, Is.EqualTo(OldFName));
+                Assert.That(user.UserInfo.LastName, Is.EqualTo(OldLName));
             });
         }
     }

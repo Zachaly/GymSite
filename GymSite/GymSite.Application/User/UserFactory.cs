@@ -27,8 +27,13 @@ namespace GymSite.Application.User
             };
 
         public UserModel CreateModel(ApplicationUser user)
-        {
-            throw new NotImplementedException();
-        }
+            => new UserModel
+            {
+                Created = user.Created.ToString("dd.MM.yyyy"),
+                FirstName = user.UserInfo?.FirstName ?? "",
+                LastName = user.UserInfo?.LastName ?? "",
+                NickName = user.NickName,
+                Gender = user.UserInfo?.Gender ?? 0
+            };
     }
 }
