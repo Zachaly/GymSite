@@ -26,7 +26,7 @@ namespace GymSite.Database.User
         {
             _dbContext.Users.Update(user);
             
-            return Task.CompletedTask;
+            return _dbContext.SaveChangesAsync();
         }
     }
 }
