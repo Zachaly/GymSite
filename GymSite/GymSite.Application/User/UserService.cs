@@ -4,6 +4,7 @@ using GymSite.Database.User;
 using GymSite.Domain.Entity;
 using GymSite.Domain.Utils;
 using GymSite.Models.Response;
+using GymSite.Models.User;
 using GymSite.Models.User.Request;
 using Microsoft.AspNetCore.Identity;
 
@@ -16,16 +17,19 @@ namespace GymSite.Application.User
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IUserFactory _userFactory;
         private readonly IResponseFactory _responseFactory;
+        private readonly IUserRepository _userRepository;
 
         public UserService(IUserInfoRepository userInfoRepository,
             UserManager<ApplicationUser> userManager,
             IUserFactory userFactory,
-            IResponseFactory responseFactory)
+            IResponseFactory responseFactory,
+            IUserRepository userRepository)
         {
             _userInfoRepository = userInfoRepository;
             _userManager = userManager;
             _userFactory = userFactory;
             _responseFactory = responseFactory;
+            _userRepository = userRepository;
         }
 
         public async Task<ResponseModel> AddUser(AddUserRequest request)
@@ -51,6 +55,18 @@ namespace GymSite.Application.User
             {
                 return _responseFactory.CreateFail(ResponseCode.BadRequest, ex.Message, null);
             }
+        }
+
+        public async Task<DataResponseModel<UserModel>> GetUserById(string id)
+        {
+            var user = await _userRepository.GetUserByIdAsync(id, user => _userFactory.CreateModel(user));
+
+            return _responseFactory.CreateSuccess(ResponseCode.Ok, "", user);
+        }
+
+        public Task<ResponseModel> UpdateUser(UpdateUserRequest request, string userId)
+        {
+            throw new NotImplementedException();
         }
     }
 }

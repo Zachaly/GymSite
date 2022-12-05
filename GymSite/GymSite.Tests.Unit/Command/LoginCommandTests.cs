@@ -12,7 +12,7 @@ using System.IdentityModel.Tokens.Jwt;
 namespace GymSite.Tests.Unit.Command
 {
     [TestFixture]
-    public class AuthCommandTests
+    public class LoginCommandTests
     {
         private static Mock<UserManager<ApplicationUser>> MockUserManager()
         {
@@ -74,6 +74,7 @@ namespace GymSite.Tests.Unit.Command
                 Assert.That(res.Code, Is.EqualTo(ResponseCode.Ok));
                 Assert.That(res.Data.AuthToken, Is.Not.Empty);
                 Assert.That(res.Data.UserId, Is.Not.Empty);
+                Assert.That(res.Data.Username, Is.EqualTo(command.Username));
             });
         }
 

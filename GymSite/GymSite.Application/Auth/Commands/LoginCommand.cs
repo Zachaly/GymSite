@@ -52,6 +52,7 @@ namespace GymSite.Application.Auth.Commands
             {
                 AuthToken = new JwtSecurityTokenHandler().WriteToken(await _authService.CreateToken(user)),
                 UserId = user.Id,
+                Username = user.UserName
             };
 
             return _responseFactory.CreateSuccess(ResponseCode.Ok, "", data);

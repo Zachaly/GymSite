@@ -4,14 +4,10 @@ using GymSite.Application.User.Abstractions;
 using GymSite.Database.User;
 using GymSite.Domain.Entity;
 using GymSite.Models.Response;
+using GymSite.Models.User;
 using GymSite.Models.User.Request;
 using Microsoft.AspNetCore.Identity;
 using Moq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GymSite.Tests.Unit.Service
 {
@@ -68,7 +64,9 @@ namespace GymSite.Tests.Unit.Service
                     Message = message
                 });
 
-            var service = new UserService(repositoryMock.Object, managerMock.Object, factoryMock.Object, responseFactoryMock.Object);
+            var userRepositoryMock = new Mock<IUserRepository>();
+
+            var service = new UserService(repositoryMock.Object, managerMock.Object, factoryMock.Object, responseFactoryMock.Object, userRepositoryMock.Object);
 
             var request = new AddUserRequest
             {
@@ -90,6 +88,109 @@ namespace GymSite.Tests.Unit.Service
                 Assert.That(userList.Count, Is.EqualTo(1));
                 Assert.That(userInfoList.Count, Is.EqualTo(1));
                 Assert.That(userList.First().UserInfoId, Is.EqualTo(1));
+            });
+        }
+
+        [Test]
+        public async Task GetUserById()
+        {
+            var userList = new List<ApplicationUser>
+            {
+                new ApplicationUser {Id = "id1", UserName = "name1", NickName = "nick1" },
+                new ApplicationUser {Id = "id2", UserName = "name2", NickName = "nick2" },
+                new ApplicationUser {Id = "id3", UserName = "name3", NickName = "nick3" },
+            };
+
+            var managerMock = MockUserManager();
+
+            var repositoryMock = new Mock<IUserInfoRepository>();
+
+            var factoryMock = new Mock<IUserFactory>();
+            factoryMock.Setup(x => x.CreateModel(It.IsAny<ApplicationUser>()))
+                .Returns((ApplicationUser user) => new UserModel { NickName = user.NickName });
+
+            var responseFactoryMock = new Mock<IResponseFactory>();
+            responseFactoryMock.Setup(x => x.CreateSuccess(It.IsAny<ResponseCode>(), It.IsAny<string>(), It.IsAny<UserModel>()))
+                .Returns((ResponseCode code, string message, UserModel data) => new DataResponseModel<UserModel>
+                {
+                    Success = true,
+                    Code = code,
+                    Message = message,
+                    Data = data
+                });
+
+            var userRepositoryMock = new Mock<IUserRepository>();
+
+
+            var service = new UserService(repositoryMock.Object, managerMock.Object, factoryMock.Object, responseFactoryMock.Object, userRepositoryMock.Object);
+
+            const string Id = "id2";
+
+            var res = await service.GetUserById(Id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(res.Success);
+                Assert.That(res.Code, Is.EqualTo(ResponseCode.Ok));
+                Assert.That(res.Data.NickName, Is.EqualTo(userList.FirstOrDefault(x => x.Id == Id).NickName));
+            });
+        }
+
+        [Test]
+        public async Task UpdateUser()
+        {
+            var userList = new List<ApplicationUser>
+            {
+                new ApplicationUser {Id = "id1", UserName = "name1", NickName = "nick1", UserInfo = new UserInfo() },
+                new ApplicationUser {Id = "id2", UserName = "name2", NickName = "nick2", UserInfo = new UserInfo() },
+                new ApplicationUser {Id = "id3", UserName = "name3", NickName = "nick3", UserInfo = new UserInfo() },
+            };
+
+            var managerMock = MockUserManager();
+
+            var repositoryMock = new Mock<IUserInfoRepository>();
+
+            var factoryMock = new Mock<IUserFactory>();
+
+            var responseFactoryMock = new Mock<IResponseFactory>();
+            responseFactoryMock.Setup(x => x.CreateSuccess(It.IsAny<ResponseCode>(), It.IsAny<string>()))
+                .Returns((ResponseCode code, string message) => new ResponseModel
+                {
+                    Success = true,
+                    Code = code,
+                    Message = message,
+                });
+
+            var userRepositoryMock = new Mock<IUserRepository>();
+            userRepositoryMock.Setup(x => x.UpdateUser(It.IsAny<ApplicationUser>()));
+            userRepositoryMock.Setup(x => x.GetUserByIdAsync(It.IsAny<string>(), It.IsAny<Func<ApplicationUser, ApplicationUser>>()))
+                .Returns((string id, Func<ApplicationUser, ApplicationUser> selector)
+                    => Task.FromResult(userList.FirstOrDefault(x => x.Id == id)));
+
+
+            var service = new UserService(repositoryMock.Object, managerMock.Object, factoryMock.Object, responseFactoryMock.Object, userRepositoryMock.Object);
+
+            const string Id = "id2";
+            var request = new UpdateUserRequest
+            {
+                FirstName = "new fname",
+                Gender = Domain.Enum.Gender.Male,
+                LastName = "new lname",
+                NickName = "new nname"
+            };
+
+            var res = await service.UpdateUser(request, Id);
+
+            var user = userList.FirstOrDefault(x => x.Id == Id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(res.Success);
+                Assert.That(res.Code, Is.EqualTo(ResponseCode.NoContent));
+                Assert.That(user.NickName, Is.EqualTo(request.NickName));
+                Assert.That(user.UserInfo.Gender, Is.EqualTo(request.Gender));
+                Assert.That(user.UserInfo.FirstName, Is.EqualTo(request.FirstName));
+                Assert.That(user.UserInfo.LastName, Is.EqualTo(request.LastName));
             });
         }
     }

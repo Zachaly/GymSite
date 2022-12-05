@@ -1,4 +1,5 @@
 ﻿using GymSite.Domain.Entity;
+using GymSite.Models.User;
 using GymSite.Models.User.Request;
 
 namespace GymSite.Application.User.Abstractions
@@ -7,5 +8,6 @@ namespace GymSite.Application.User.Abstractions
     {
         ApplicationUser Create(AddUserRequest request);
         UserInfo CreateInfo(AddUserRequest request);
+        UserModel CreateModel(ApplicationUser user);
     }
 }

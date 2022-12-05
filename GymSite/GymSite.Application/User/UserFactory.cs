@@ -1,6 +1,7 @@
 ﻿using GymSite.Application.User.Abstractions;
 using GymSite.Domain.Entity;
 using GymSite.Domain.Utils;
+using GymSite.Models.User;
 using GymSite.Models.User.Request;
 
 namespace GymSite.Application.User
@@ -24,5 +25,10 @@ namespace GymSite.Application.User
                 Gender = request.Gender ?? Domain.Enum.Gender.NotSpecified,
                 LastName = request.LastName
             };
+
+        public UserModel CreateModel(ApplicationUser user)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -1,6 +1,4 @@
-﻿using GymSite.Domain.Entity;
-
-namespace GymSite.Database.User
+﻿namespace GymSite.Database.User
 {
     public interface IUserInfoRepository
     {
