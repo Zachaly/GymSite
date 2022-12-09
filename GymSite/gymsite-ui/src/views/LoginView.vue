@@ -14,17 +14,19 @@
                 </div>
             </div>
             <div class="field">
-                <button class="button is-success" @click="confirm">Create account</button>
+                <button class="button is-success" @click="confirm">Login</button>
             </div>
         </div>
     </div>
 </template>
 
 <script setup>
-const { useFetchStore }=require("@/stores/fetchStore");
+import { useAuthStore } from "@/stores/authStore";
+import { useRouter } from "vue-router";
 const { ref }=require("@vue/reactivity");
 
-const fetchStore = useFetchStore()
+const authStore = useAuthStore()
+const router = useRouter()
 
 const loginModel = ref({
     username: '',
@@ -32,6 +34,6 @@ const loginModel = ref({
 })
 
 function confirm(){
-    fetchStore.post('auth/login', loginModel.value, r => { alert("Logged as " + r.data.userId) })
+    authStore.login(loginModel.value).then(() => router.push('/'))
 }
 </script>

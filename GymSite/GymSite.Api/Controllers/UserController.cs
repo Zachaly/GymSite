@@ -30,7 +30,7 @@ namespace GymSite.Api.Controllers
 
         [HttpPut]
         [Authorize]
-        public async Task<ActionResult<ResponseModel>> UpdateUser([FromBody] UpdateUserCommand command)
+        public async Task<ActionResult<ResponseModel>> UpdateUser(UpdateUserCommand command)
         {
             var res = await _mediator.Send(command);
 

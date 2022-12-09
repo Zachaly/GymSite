@@ -15,10 +15,20 @@ const routes = [
         path: '/login',
         name: 'login',
         component: () => import('@/views/LoginView.vue')
+    },
+    {
+        path: '/user/:id',
+        name: 'user',
+        component: () => import('@/views/ProfileView.vue'),
+    },
+    {
+        path: '/user/update',
+        name: 'updateprofile',
+        component: () => import('@/views/UpdateProfileView.vue')
     }
 ]
 
 export default createRouter({
     routes,
-    history: createWebHistory(process.env.BASE_URL),
+    history: createWebHistory(),
 })
