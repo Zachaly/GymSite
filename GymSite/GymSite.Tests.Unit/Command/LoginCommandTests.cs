@@ -8,6 +8,7 @@ using GymSite.Models.User.Response;
 using Microsoft.AspNetCore.Identity;
 using Moq;
 using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 
 namespace GymSite.Tests.Unit.Command
 {
@@ -36,6 +37,9 @@ namespace GymSite.Tests.Unit.Command
                 .ReturnsAsync((ApplicationUser givenUser, string password)
                     => user.UserName == givenUser.UserName && Password == password);
 
+            userManagerMock.Setup(x => x.GetClaimsAsync(It.IsAny<ApplicationUser>()))
+                .ReturnsAsync(new List<Claim> { new Claim("Role", "Admin") });
+
             var responseFactoryMock = new Mock<IResponseFactory>();
             responseFactoryMock.Setup(x => x.CreateSuccess(It.IsAny<ResponseCode>(), It.IsAny<string>(), It.IsAny<LoginResponse>()))
                 .Returns((ResponseCode code, string message, LoginResponse data) 
@@ -54,7 +58,7 @@ namespace GymSite.Tests.Unit.Command
                 .ReturnsAsync(user);
 
             var authServiceMock = new Mock<IAuthService>();
-            authServiceMock.Setup(x => x.CreateToken(It.IsAny<ApplicationUser>()))
+            authServiceMock.Setup(x => x.CreateToken(It.IsAny<IEnumerable<Claim>>()))
                 .ReturnsAsync(new JwtSecurityToken());
 
             var command = new LoginCommand
@@ -75,6 +79,7 @@ namespace GymSite.Tests.Unit.Command
                 Assert.That(res.Data.AuthToken, Is.Not.Empty);
                 Assert.That(res.Data.UserId, Is.Not.Empty);
                 Assert.That(res.Data.Username, Is.EqualTo(command.Username));
+                Assert.That(res.Data.Claims.Contains("Admin"));
             });
         }
 
@@ -89,6 +94,9 @@ namespace GymSite.Tests.Unit.Command
             userManagerMock.Setup(x => x.CheckPasswordAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>()))
                 .ReturnsAsync((ApplicationUser givenUser, string password)
                     => user.UserName == givenUser.UserName && Password == password);
+
+            userManagerMock.Setup(x => x.GetClaimsAsync(It.IsAny<ApplicationUser>()))
+                .ReturnsAsync(new List<Claim>());
 
             var responseFactoryMock = new Mock<IResponseFactory>();
             responseFactoryMock.Setup(x => x.CreateFail<LoginResponse>(It.IsAny<ResponseCode>(), It.IsAny<string>(), null))
@@ -108,7 +116,7 @@ namespace GymSite.Tests.Unit.Command
                 .ReturnsAsync(user);
 
             var authServiceMock = new Mock<IAuthService>();
-            authServiceMock.Setup(x => x.CreateToken(It.IsAny<ApplicationUser>()))
+            authServiceMock.Setup(x => x.CreateToken(It.IsAny<IEnumerable<Claim>>()))
                 .ReturnsAsync(new JwtSecurityToken());
 
             var command = new LoginCommand
@@ -142,6 +150,9 @@ namespace GymSite.Tests.Unit.Command
                 .ReturnsAsync((ApplicationUser givenUser, string password)
                     => user.UserName == givenUser.UserName && Password == password);
 
+            userManagerMock.Setup(x => x.GetClaimsAsync(It.IsAny<ApplicationUser>()))
+                .ReturnsAsync(new List<Claim>());
+                
             var responseFactoryMock = new Mock<IResponseFactory>();
             responseFactoryMock.Setup(x => x.CreateFail<LoginResponse>(It.IsAny<ResponseCode>(), It.IsAny<string>(), null))
                 .Returns((ResponseCode code, string message, LoginResponse data)
@@ -160,7 +171,7 @@ namespace GymSite.Tests.Unit.Command
                 .ReturnsAsync(user);
 
             var authServiceMock = new Mock<IAuthService>();
-            authServiceMock.Setup(x => x.CreateToken(It.IsAny<ApplicationUser>()))
+            authServiceMock.Setup(x => x.CreateToken(It.IsAny<IEnumerable<Claim>>()))
                 .ReturnsAsync(new JwtSecurityToken());
 
             var command = new LoginCommand

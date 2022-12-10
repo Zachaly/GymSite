@@ -7,6 +7,7 @@ using GymSite.Models.User.Response;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 
 namespace GymSite.Application.Auth.Commands
 {
@@ -48,17 +49,29 @@ namespace GymSite.Application.Auth.Commands
                 return CreateFail();
             }
 
+            var claims = new List<Claim>
+            {
+                new Claim(JwtRegisteredClaimNames.Sub, user.Id),
+                new Claim(JwtRegisteredClaimNames.Name, user.UserName),
+            };
+
+            claims.AddRange(_userManager.GetClaimsAsync(user).Result);
+
             var data = new LoginResponse
             {
-                AuthToken = new JwtSecurityTokenHandler().WriteToken(await _authService.CreateToken(user)),
+                AuthToken = new JwtSecurityTokenHandler().WriteToken(await _authService.CreateToken(claims)),
                 UserId = user.Id,
-                Username = user.UserName
+                Username = user.UserName,
+                Claims = GetRoleClaims(claims)
             };
 
             return _responseFactory.CreateSuccess(ResponseCode.Ok, "", data);
         }
 
         private DataResponseModel<LoginResponse> CreateFail()
-        => _responseFactory.CreateFail<LoginResponse>(ResponseCode.BadRequest, "Username or password incorrect!", null);
+            => _responseFactory.CreateFail<LoginResponse>(ResponseCode.BadRequest, "Username or password incorrect!", null);
+
+        private IEnumerable<string> GetRoleClaims(IEnumerable<Claim> claims)
+            => claims.Where(claim => claim.Type == "Role").Select(claim => claim.Value);
     }
 }

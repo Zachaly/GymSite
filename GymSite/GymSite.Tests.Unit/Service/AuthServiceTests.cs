@@ -60,16 +60,17 @@ namespace GymSite.Tests.Unit.Service
         public async Task CreateToken()
         {
             var userManagerMock = MockUserManager();
-            userManagerMock.Setup(x => x.GetClaimsAsync(It.IsAny<ApplicationUser>()))
-                .ReturnsAsync(new List<Claim>());
             var configMock = MockConfig();
             var httpContextAccessorMock = new Mock<IHttpContextAccessor>();
 
             var service = new AuthService(configMock.Object, userManagerMock.Object, httpContextAccessorMock.Object);
 
-            var user = new ApplicationUser { Email = "email@email.com", Id = "id", UserName = "name" };
+            var idClaim = new Claim(JwtRegisteredClaimNames.Sub, "id");
+            var nameClaim = new Claim(JwtRegisteredClaimNames.UniqueName, "name");
 
-            var token = await service.CreateToken(user);
+            var claims = new List<Claim> { idClaim, nameClaim };
+
+            var token = await service.CreateToken(claims);
 
             var tokenValidation = new TokenValidationParameters
             {
@@ -83,9 +84,8 @@ namespace GymSite.Tests.Unit.Service
 
             Assert.Multiple(() =>
             {
-                Assert.That(res.Claims.Any(x => x.Value == user.Id));
-                Assert.That(res.Claims.Any(x => x.Value == user.Email));
-                Assert.That(res.Claims.Any(x => x.Value == user.UserName));
+                Assert.That(res.Claims.Any(x => x.Value == idClaim.Value));
+                Assert.That(res.Claims.Any(x => x.Value == nameClaim.Value));
             });
         }
     }

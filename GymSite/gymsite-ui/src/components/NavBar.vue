@@ -7,8 +7,8 @@
                     <router-link to="/register" class="navbar-item">Register</router-link>
                 </div>
                 <div v-else class="navbar-end" >
-                    <p>xd</p>
                     <router-link :to="`/user/${authStore.userId}`" class="navbar-item">Profile</router-link>
+                    <router-link v-if="authStore.claims.includes('Admin')" to="/admin" class="navbar-item">Admin</router-link>
                 </div>
             </div>
         </div>

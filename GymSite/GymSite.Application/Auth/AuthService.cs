@@ -31,17 +31,8 @@ namespace GymSite.Application.Auth
             _userManager = userManager;
         }
 
-        public Task<JwtSecurityToken> CreateToken(ApplicationUser user)
+        public Task<JwtSecurityToken> CreateToken(IEnumerable<Claim> claims)
         {
-            var claims = new List<Claim>
-            {
-                new Claim(JwtRegisteredClaimNames.Sub, user.Id),
-                new Claim(JwtRegisteredClaimNames.Email, user.Email),
-                new Claim(JwtRegisteredClaimNames.Name, user.UserName),
-            };
-
-            claims.AddRange(_userManager.GetClaimsAsync(user).Result);
-
             var bytes = Encoding.UTF8.GetBytes(_secretKey);
             var key = new SymmetricSecurityKey(bytes);
 
