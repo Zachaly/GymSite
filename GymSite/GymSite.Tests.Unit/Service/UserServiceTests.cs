@@ -9,7 +9,6 @@ using GymSite.Models.User;
 using GymSite.Models.User.Request;
 using Microsoft.AspNetCore.Identity;
 using Moq;
-using NUnit.Framework.Constraints;
 
 namespace GymSite.Tests.Unit.Service
 {

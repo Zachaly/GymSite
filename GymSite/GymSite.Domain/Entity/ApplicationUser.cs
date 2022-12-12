@@ -8,5 +8,7 @@ namespace GymSite.Domain.Entity
         public int? UserInfoId { get; set; }
         public UserInfo? UserInfo { get; set; }
         public DateTime Created { get; set; }
+        public ICollection<Exercise> Exercises { get; set; }
+        public ICollection<ExerciseRecord> ExerciseRecords { get; set; }
     }
 }

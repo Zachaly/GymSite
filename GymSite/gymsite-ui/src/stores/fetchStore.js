@@ -1,10 +1,9 @@
 import { defineStore } from "pinia"
 
 export const useFetchStore = defineStore('fetch', {
-    state: () => ({ loading: false, apiPath: 'https:localhost:5001/api/', token: '' }),
+    state: () => ({ apiPath: 'https:localhost:5001/api/', token: '' }),
     actions: {
         get(path, handler) {
-            this.loading = true
             return fetch(this.apiPath + path, {
                 headers: {
                     'Authorization': 'Bearer' + this.token
@@ -12,12 +11,9 @@ export const useFetchStore = defineStore('fetch', {
             }).then(r => r.json())
                 .then(json => {
                     handler(json)
-                    this.loading = false
-                })
-                .catch(error => console.log(error))
+                }).catch(error => console.log(error))
         },
         post(path, body, handler) {
-            this.loading = true
             return fetch(this.apiPath + path, {
                 headers: {
                     'Accept': 'application/json',
@@ -29,10 +25,20 @@ export const useFetchStore = defineStore('fetch', {
             }).then(r => r.json())
                 .then(json => {
                     handler(json)
-                }).then(() => this.loading = false)
+                })
+        },
+        postNoContent(path, body) {
+            return fetch(this.apiPath + path, {
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + this.token
+                },
+                method: "POST",
+                body: JSON.stringify(body)
+            })
         },
         put(path, body) {
-            this.loading = true
             return fetch(this.apiPath + path, {
                 headers: {
                     'Accept': 'application/json',
@@ -42,7 +48,6 @@ export const useFetchStore = defineStore('fetch', {
                 method: "PUT",
                 body: JSON.stringify(body)
             }).catch(error => console.log(error))
-            .then(() => this.loading = false)
         }
     }
 })

@@ -23,13 +23,28 @@ const routes = [
     },
     {
         path: '/user/update',
-        name: 'updateprofile',
+        name: 'update-profile',
         component: () => import('@/views/UpdateProfileView.vue')
     },
     {
         path: '/admin',
         name: 'admin',
         component: () => import('@/views/AdminView.vue')
+    },
+    {
+        path: '/exercise',
+        name: 'exercise-list',
+        component: () => import("@/views/ExerciseListView.vue")
+    },
+    {
+        path: '/exercise/:id',
+        name: 'exercise',
+        component: () => import('@/views/ExerciseView.vue')
+    },
+    {
+        path: '/exercise/add',
+        name: 'add-exercise',
+        component: () => import('@/views/AddExerciseView.vue')
     }
 ]
 
