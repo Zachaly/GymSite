@@ -3,6 +3,7 @@ using GymSite.Application.Abstractions;
 using GymSite.Application.Commands;
 using GymSite.Models.Response;
 using GymSite.Models.User.Request;
+using GymSite.Models.User.Response;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -22,8 +23,15 @@ namespace GymSite.Api.Controllers
             _userService = userService;
         }
 
+        /// <summary>
+        /// Creates new user with data specified in request
+        /// </summary>
+        /// <response code="200">User added successfully</response>
+        /// <response code="404">Failed to add user</response>
         [HttpPost]
         [Route("register")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(404)]
         public async Task<ActionResult<ResponseModel>> Register(AddUserRequest request)
         {
             var res = await _userService.AddUser(request);
@@ -31,9 +39,16 @@ namespace GymSite.Api.Controllers
             return res.CreateOkOrBadRequest();
         }
 
+        /// <summary>
+        /// Returns jwt and user authorization info
+        /// </summary>
+        /// <response code="200">User authorized successfully</response>
+        /// <response code="404">Login data is not valid</response>
         [HttpPost]
         [Route("login")]
-        public async Task<ActionResult<ResponseModel>> Login(LoginCommand command)
+        [ProducesResponseType(200)]
+        [ProducesResponseType(404)]
+        public async Task<ActionResult<DataResponseModel<LoginResponse>>> Login(LoginCommand command)
         {
             var res = await _mediator.Send(command);
 
