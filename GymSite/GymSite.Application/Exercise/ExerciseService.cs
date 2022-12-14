@@ -1,5 +1,4 @@
 ﻿using GymSite.Application.Abstractions;
-using GymSite.Application.Response.Abstractions;
 using GymSite.Database.Repository.Abstractions;
 using GymSite.Domain.Utils;
 using GymSite.Models.Exercise;
@@ -30,21 +29,21 @@ namespace GymSite.Application
 
             await _exerciseRepository.AddExerciseAsync(exercise);
 
-            return _responseFactory.CreateSuccess(ResponseCode.NoContent, "");
+            return _responseFactory.CreateSuccess();
         }
 
         public DataResponseModel<ExerciseModel> GetExerciseById(int id)
         {
             var data = _exerciseRepository.GetExerciseById(id, exercise => _exerciseFactory.CreateModel(exercise));
 
-            return _responseFactory.CreateSuccess(ResponseCode.Ok, "", data);
+            return _responseFactory.CreateSuccess(data);
         }
 
         public DataResponseModel<IEnumerable<ExerciseListItemModel>> GetUserExercises(string userId)
         {
             var data = _exerciseRepository.GetExercisesByUserId(userId, exercise => _exerciseFactory.CreateListItem(exercise));
 
-            return _responseFactory.CreateSuccess(ResponseCode.Ok, "", data);
+            return _responseFactory.CreateSuccess(data);
         }
 
         public async Task<ResponseModel> RemoveExercise(int id)
@@ -52,11 +51,11 @@ namespace GymSite.Application
             try
             {
                 await _exerciseRepository.RemoveExerciseByIdAsync(id);
-                return _responseFactory.CreateSuccess(0, "");
+                return _responseFactory.CreateSuccess();
             }
             catch (Exception ex)
             {
-                return _responseFactory.CreateFail(0, ex.Message, null);
+                return _responseFactory.CreateFail(ex.Message, null);
             }
         }
     }

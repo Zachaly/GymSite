@@ -1,7 +1,5 @@
-﻿using GymSite.Application.Response.Abstractions;
-using GymSite.Application.User;
-using GymSite.Application.User.Abstractions;
-using GymSite.Database.User;
+﻿using GymSite.Application.Abstractions;
+using GymSite.Application;
 using GymSite.Domain.Entity;
 using GymSite.Domain.Enum;
 using GymSite.Models.Response;
@@ -9,6 +7,7 @@ using GymSite.Models.User;
 using GymSite.Models.User.Request;
 using Microsoft.AspNetCore.Identity;
 using Moq;
+using GymSite.Database.Repository.Abstractions;
 
 namespace GymSite.Tests.Unit.Service
 {
@@ -57,11 +56,10 @@ namespace GymSite.Tests.Unit.Service
             factoryMock.Setup(x => x.CreateInfo(It.IsAny<AddUserRequest>())).Returns(new UserInfo());
 
             var responseFactoryMock = new Mock<IResponseFactory>();
-            responseFactoryMock.Setup(x => x.CreateSuccess(It.IsAny<ResponseCode>(), It.IsAny<string>()))
-                .Returns((ResponseCode code, string message) => new ResponseModel
+            responseFactoryMock.Setup(x => x.CreateSuccess(It.IsAny<string>()))
+                .Returns((string message) => new ResponseModel
                 {
                     Success = true,
-                    Code = code,
                     Message = message
                 });
 
@@ -73,7 +71,7 @@ namespace GymSite.Tests.Unit.Service
             {
                 Email = "email@email.com",
                 FirstName = "fname",
-                Gender = Domain.Enum.Gender.Male,
+                Gender = Gender.Male,
                 LastName = "lname",
                 NickName = "nname",
                 Password = "password",
@@ -85,7 +83,6 @@ namespace GymSite.Tests.Unit.Service
             Assert.Multiple(() =>
             {
                 Assert.That(res.Success);
-                Assert.That(res.Code, Is.EqualTo(ResponseCode.NoContent));
                 Assert.That(userList.Count, Is.EqualTo(1));
                 Assert.That(userInfoList.Count, Is.EqualTo(1));
                 Assert.That(userList.First().UserInfoId, Is.EqualTo(1));
@@ -97,9 +94,9 @@ namespace GymSite.Tests.Unit.Service
         {
             var userList = new List<ApplicationUser>
             {
-                new ApplicationUser {Id = "id1", UserName = "name1", NickName = "nick1" },
-                new ApplicationUser {Id = "id2", UserName = "name2", NickName = "nick2" },
-                new ApplicationUser {Id = "id3", UserName = "name3", NickName = "nick3" },
+                new ApplicationUser { Id = "id1", UserName = "name1", NickName = "nick1" },
+                new ApplicationUser { Id = "id2", UserName = "name2", NickName = "nick2" },
+                new ApplicationUser { Id = "id3", UserName = "name3", NickName = "nick3" },
             };
 
             var managerMock = MockUserManager();
@@ -118,11 +115,10 @@ namespace GymSite.Tests.Unit.Service
                     });
 
             var responseFactoryMock = new Mock<IResponseFactory>();
-            responseFactoryMock.Setup(x => x.CreateSuccess(It.IsAny<ResponseCode>(), It.IsAny<string>(), It.IsAny<UserModel>()))
-                .Returns((ResponseCode code, string message, UserModel data) => new DataResponseModel<UserModel>
+            responseFactoryMock.Setup(x => x.CreateSuccess(It.IsAny<UserModel>(), It.IsAny<string>()))
+                .Returns((UserModel data, string message) => new DataResponseModel<UserModel>
                 {
                     Success = true,
-                    Code = code,
                     Message = message,
                     Data = data
                 });
@@ -143,7 +139,6 @@ namespace GymSite.Tests.Unit.Service
             Assert.Multiple(() =>
             {
                 Assert.That(res.Success);
-                Assert.That(res.Code, Is.EqualTo(ResponseCode.Ok));
                 Assert.That(res.Data.NickName, Is.EqualTo(userList.FirstOrDefault(x => x.Id == Id).NickName));
             });
         }
@@ -153,9 +148,9 @@ namespace GymSite.Tests.Unit.Service
         {
             var userList = new List<ApplicationUser>
             {
-                new ApplicationUser {Id = "id1", UserName = "name1", NickName = "nick1", UserInfo = new UserInfo() },
-                new ApplicationUser {Id = "id2", UserName = "name2", NickName = "nick2", UserInfo = new UserInfo() },
-                new ApplicationUser {Id = "id3", UserName = "name3", NickName = "nick3", UserInfo = new UserInfo() },
+                new ApplicationUser { Id = "id1", UserName = "name1", NickName = "nick1", UserInfo = new UserInfo() },
+                new ApplicationUser { Id = "id2", UserName = "name2", NickName = "nick2", UserInfo = new UserInfo() },
+                new ApplicationUser { Id = "id3", UserName = "name3", NickName = "nick3", UserInfo = new UserInfo() },
             };
 
             var managerMock = MockUserManager();
@@ -165,11 +160,10 @@ namespace GymSite.Tests.Unit.Service
             var factoryMock = new Mock<IUserFactory>();
 
             var responseFactoryMock = new Mock<IResponseFactory>();
-            responseFactoryMock.Setup(x => x.CreateSuccess(It.IsAny<ResponseCode>(), It.IsAny<string>()))
-                .Returns((ResponseCode code, string message) => new ResponseModel
+            responseFactoryMock.Setup(x => x.CreateSuccess(It.IsAny<string>()))
+                .Returns((string message) => new ResponseModel
                 {
                     Success = true,
-                    Code = code,
                     Message = message,
                 });
 
@@ -198,7 +192,6 @@ namespace GymSite.Tests.Unit.Service
             Assert.Multiple(() =>
             {
                 Assert.That(res.Success);
-                Assert.That(res.Code, Is.EqualTo(ResponseCode.NoContent));
                 Assert.That(user.NickName, Is.EqualTo(request.NickName));
                 Assert.That(user.UserInfo.Gender, Is.EqualTo(request.Gender));
                 Assert.That(user.UserInfo.FirstName, Is.EqualTo(request.FirstName));
@@ -211,8 +204,9 @@ namespace GymSite.Tests.Unit.Service
         {
             var userList = new List<ApplicationUser>
             {
-                new ApplicationUser {Id = "id1", UserName = "name1", NickName = "nick1", UserInfo = new UserInfo() },
-                new ApplicationUser {
+                new ApplicationUser { Id = "id1", UserName = "name1", NickName = "nick1", UserInfo = new UserInfo() },
+                new ApplicationUser 
+                {
                     Id = "id2",
                     UserName = "name2",
                     NickName = "nick2",
@@ -221,8 +215,9 @@ namespace GymSite.Tests.Unit.Service
                         FirstName = "fname",
                         LastName = "lname",
                         Gender = Gender.Male,
-                    }},
-                new ApplicationUser {Id = "id3", UserName = "name3", NickName = "nick3", UserInfo = new UserInfo() },
+                    }
+                },
+                new ApplicationUser { Id = "id3", UserName = "name3", NickName = "nick3", UserInfo = new UserInfo() },
             };
 
             var managerMock = MockUserManager();
@@ -232,11 +227,10 @@ namespace GymSite.Tests.Unit.Service
             var factoryMock = new Mock<IUserFactory>();
 
             var responseFactoryMock = new Mock<IResponseFactory>();
-            responseFactoryMock.Setup(x => x.CreateSuccess(It.IsAny<ResponseCode>(), It.IsAny<string>()))
-                .Returns((ResponseCode code, string message) => new ResponseModel
+            responseFactoryMock.Setup(x => x.CreateSuccess(It.IsAny<string>()))
+                .Returns((string message) => new ResponseModel
                 {
                     Success = true,
-                    Code = code,
                     Message = message,
                 });
 
@@ -264,7 +258,6 @@ namespace GymSite.Tests.Unit.Service
             Assert.Multiple(() =>
             {
                 Assert.That(res.Success);
-                Assert.That(res.Code, Is.EqualTo(ResponseCode.NoContent));
                 Assert.That(user.NickName, Is.EqualTo(OldNick));
                 Assert.That(user.UserInfo.Gender, Is.EqualTo(OldGender));
                 Assert.That(user.UserInfo.FirstName, Is.EqualTo(OldFName));

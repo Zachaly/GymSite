@@ -1,7 +1,6 @@
 ﻿using GymSite.Application;
 using GymSite.Domain.Entity;
 using GymSite.Models.Exercise.Request;
-using GymSite.Models.Record;
 
 namespace GymSite.Tests.Unit.Factory
 {

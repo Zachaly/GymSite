@@ -1,10 +1,10 @@
-﻿using GymSite.Application.User.Abstractions;
+﻿using GymSite.Application.Abstractions;
 using GymSite.Domain.Entity;
 using GymSite.Domain.Utils;
 using GymSite.Models.User;
 using GymSite.Models.User.Request;
 
-namespace GymSite.Application.User
+namespace GymSite.Application
 {
     [Implementation(typeof(IUserFactory))]
     public class UserFactory : IUserFactory

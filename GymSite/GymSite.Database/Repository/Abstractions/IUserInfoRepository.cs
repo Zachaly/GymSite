@@ -1,4 +1,4 @@
-﻿namespace GymSite.Database.User
+﻿namespace GymSite.Database.Repository.Abstractions
 {
     public interface IUserInfoRepository
     {

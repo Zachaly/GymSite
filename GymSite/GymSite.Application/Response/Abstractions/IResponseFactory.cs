@@ -1,13 +1,12 @@
-﻿using GymSite.Models;
-using GymSite.Models.Response;
+﻿using GymSite.Models.Response;
 
-namespace GymSite.Application.Response.Abstractions
+namespace GymSite.Application.Abstractions
 {
     public interface IResponseFactory
     {
-        ResponseModel CreateSuccess(ResponseCode code, string message);
-        ResponseModel CreateFail(ResponseCode code, string message, Dictionary<string, IEnumerable<string>> errors);
-        DataResponseModel<T> CreateSuccess<T>(ResponseCode code, string message, T data);
-        DataResponseModel<T> CreateFail<T>(ResponseCode code, string message, Dictionary<string, IEnumerable<string>>? errors);
+        ResponseModel CreateSuccess(string message = "");
+        ResponseModel CreateFail(string message, Dictionary<string, IEnumerable<string>> errors);
+        DataResponseModel<T> CreateSuccess<T>(T data, string message = "");
+        DataResponseModel<T> CreateFail<T>(string message, Dictionary<string, IEnumerable<string>>? errors);
     }
 }

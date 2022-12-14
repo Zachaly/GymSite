@@ -1,6 +1,5 @@
-﻿using GymSite.Application.Response.Abstractions;
-using GymSite.Application.User.Abstractions;
-using GymSite.Database.User;
+﻿using GymSite.Application.Abstractions;
+using GymSite.Database.Repository.Abstractions;
 using GymSite.Domain.Entity;
 using GymSite.Domain.Utils;
 using GymSite.Models.Response;
@@ -8,7 +7,7 @@ using GymSite.Models.User;
 using GymSite.Models.User.Request;
 using Microsoft.AspNetCore.Identity;
 
-namespace GymSite.Application.User
+namespace GymSite.Application
 {
     [Implementation(typeof(IUserService))]
     public class UserService : IUserService
@@ -49,11 +48,11 @@ namespace GymSite.Application.User
 
                 await _userManager.UpdateAsync(user);
 
-                return _responseFactory.CreateSuccess(ResponseCode.NoContent, "User created");
+                return _responseFactory.CreateSuccess("User created");
             }
             catch(Exception ex)
             {
-                return _responseFactory.CreateFail(ResponseCode.BadRequest, ex.Message, null);
+                return _responseFactory.CreateFail(ex.Message, null);
             }
         }
 
@@ -61,7 +60,7 @@ namespace GymSite.Application.User
         {
             var user = await _userRepository.GetUserByIdAsync(id, user => _userFactory.CreateModel(user));
 
-            return _responseFactory.CreateSuccess(ResponseCode.Ok, "", user);
+            return _responseFactory.CreateSuccess(user);
         }
 
         public async Task<ResponseModel> UpdateUser(UpdateUserRequest request, string userId)
@@ -75,7 +74,7 @@ namespace GymSite.Application.User
 
             await _userRepository.UpdateUser(user);
 
-            return _responseFactory.CreateSuccess(ResponseCode.NoContent, "");
+            return _responseFactory.CreateSuccess();
         }
     }
 }

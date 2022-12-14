@@ -1,10 +1,7 @@
-﻿using GymSite.Domain.Entity;
-using GymSite.Models.Response;
-using GymSite.Models.User.Request;
-using System.IdentityModel.Tokens.Jwt;
+﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
-namespace GymSite.Application.Auth.Abstractions
+namespace GymSite.Application.Abstractions
 {
     public interface IAuthService
     {

@@ -1,4 +1,4 @@
-﻿using GymSite.Application.Auth;
+﻿using GymSite.Application;
 using GymSite.Database;
 using GymSite.Domain.Entity;
 using GymSite.Domain.Utils;

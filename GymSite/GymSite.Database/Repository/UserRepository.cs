@@ -1,6 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using GymSite.Database.Repository.Abstractions;
+using Microsoft.EntityFrameworkCore;
 
-namespace GymSite.Database.User
+namespace GymSite.Database.Repository
 {
     [Implementation(typeof(IUserRepository))]
     public class UserRepository : IUserRepository
@@ -25,7 +26,7 @@ namespace GymSite.Database.User
         public Task UpdateUser(ApplicationUser user)
         {
             _dbContext.Users.Update(user);
-            
+
             return _dbContext.SaveChangesAsync();
         }
     }

@@ -2,7 +2,7 @@
 using GymSite.Models.User;
 using GymSite.Models.User.Request;
 
-namespace GymSite.Application.User.Abstractions
+namespace GymSite.Application.Abstractions
 {
     public interface IUserService
     {

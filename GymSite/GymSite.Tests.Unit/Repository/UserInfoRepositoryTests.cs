@@ -1,4 +1,4 @@
-﻿using GymSite.Database.User;
+﻿using GymSite.Database.Repository;
 using GymSite.Domain.Entity;
 
 namespace GymSite.Tests.Unit.Repository

@@ -1,11 +1,9 @@
-﻿using GymSite.Application.Auth.Abstractions;
-using GymSite.Application.User.Abstractions;
-using GymSite.Database.User;
+﻿using GymSite.Application.Abstractions;
 using GymSite.Models.Response;
 using GymSite.Models.User.Request;
 using MediatR;
 
-namespace GymSite.Application.User.Commands
+namespace GymSite.Application.Commands
 {
     public class UpdateUserCommand : UpdateUserRequest, IRequest<ResponseModel>
     {

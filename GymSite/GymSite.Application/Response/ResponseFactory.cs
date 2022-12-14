@@ -1,48 +1,42 @@
-﻿using GymSite.Application.Response.Abstractions;
+﻿using GymSite.Application.Abstractions;
 using GymSite.Domain.Utils;
 using GymSite.Models.Response;
-using System.Runtime.InteropServices;
 
-namespace GymSite.Application.Response
+namespace GymSite.Application
 {
     [Implementation(typeof(IResponseFactory))]
     public class ResponseFactory : IResponseFactory
     {
-        public ResponseModel CreateFail(ResponseCode code, string message, Dictionary<string, IEnumerable<string>> errors)
+        public ResponseModel CreateFail(string message, Dictionary<string, IEnumerable<string>> errors)
             => new ResponseModel
             {
-                Code = code,
                 Message = message,
-                Errors = errors,
+                ValidationErrors = errors,
                 Success = false
             };
 
-
-        public DataResponseModel<T> CreateFail<T>(ResponseCode code, string message, Dictionary<string, IEnumerable<string>>? errors)
+        public DataResponseModel<T> CreateFail<T>(string message, Dictionary<string, IEnumerable<string>>? errors)
             => new DataResponseModel<T>
             {
-                Code = code,
-                Errors = errors,
+                ValidationErrors = errors,
                 Message = message,
                 Success = false,
                 Data = default(T)
             };
 
-        public ResponseModel CreateSuccess(ResponseCode code, string message)
+        public ResponseModel CreateSuccess(string message = "")
             => new ResponseModel
             {
-                Code = code,
-                Errors = null,
+                ValidationErrors = null,
                 Message = message,
                 Success = true
             };
 
-        public DataResponseModel<T> CreateSuccess<T>(ResponseCode code, string message, T data)
+        public DataResponseModel<T> CreateSuccess<T>(T data, string message = "")
             => new DataResponseModel<T>
             {
-                Code = code,
                 Data = data,
-                Errors = null,
+                ValidationErrors = null,
                 Message = message,
                 Success = true
             };

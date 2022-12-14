@@ -1,5 +1,4 @@
 ﻿using GymSite.Application.Abstractions;
-using GymSite.Application.Response.Abstractions;
 using GymSite.Database.Repository.Abstractions;
 using GymSite.Domain.Utils;
 using GymSite.Models.Record.Request;
@@ -28,7 +27,7 @@ namespace GymSite.Application
 
             await _exerciseRecordRepository.AddRecordAsync(record);
 
-            return _responseFactory.CreateSuccess(ResponseCode.NoContent, "");
+            return _responseFactory.CreateSuccess();
         }
 
         public async Task<ResponseModel> RemoveRecord(int id)
@@ -37,11 +36,11 @@ namespace GymSite.Application
             {
                 await _exerciseRecordRepository.RemoveRecordByIdAsync(id);
 
-                return _responseFactory.CreateSuccess(ResponseCode.NoContent, "");
+                return _responseFactory.CreateSuccess();
             }
             catch (Exception ex)
             {
-                return _responseFactory.CreateFail(ResponseCode.BadRequest, ex.Message, null);
+                return _responseFactory.CreateFail(ex.Message, null);
             }
         }
     }

@@ -1,6 +1,5 @@
 ﻿using GymSite.Application;
 using GymSite.Application.Abstractions;
-using GymSite.Application.Response.Abstractions;
 using GymSite.Database.Repository.Abstractions;
 using GymSite.Domain.Entity;
 using GymSite.Models.Record.Request;
@@ -18,7 +17,7 @@ namespace GymSite.Tests.Unit.Service
             var recordList = new List<ExerciseRecord>();
 
             var responseFactoryMock = new Mock<IResponseFactory>();
-            responseFactoryMock.Setup(x => x.CreateSuccess(It.IsAny<ResponseCode>(), It.IsAny<string>()))
+            responseFactoryMock.Setup(x => x.CreateSuccess(""))
                 .Returns(new ResponseModel { Success = true });
 
             var repositoryMock = new Mock<IExerciseRecordRepository>();
@@ -54,7 +53,7 @@ namespace GymSite.Tests.Unit.Service
             };
 
             var responseFactoryMock = new Mock<IResponseFactory>();
-            responseFactoryMock.Setup(x => x.CreateSuccess(It.IsAny<ResponseCode>(), It.IsAny<string>()))
+            responseFactoryMock.Setup(x => x.CreateSuccess(""))
                 .Returns(new ResponseModel { Success = true });
 
             var repositoryMock = new Mock<IExerciseRecordRepository>();
@@ -87,7 +86,7 @@ namespace GymSite.Tests.Unit.Service
             };
 
             var responseFactoryMock = new Mock<IResponseFactory>();
-            responseFactoryMock.Setup(x => x.CreateFail(It.IsAny<ResponseCode>(), It.IsAny<string>(), null))
+            responseFactoryMock.Setup(x => x.CreateFail(It.IsAny<string>(), null))
                 .Returns(new ResponseModel { Success = false });
 
             var repositoryMock = new Mock<IExerciseRecordRepository>();

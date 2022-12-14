@@ -1,4 +1,4 @@
-﻿using GymSite.Application.Auth.Abstractions;
+﻿using GymSite.Application.Abstractions;
 using GymSite.Domain.Entity;
 using GymSite.Domain.Utils;
 using Microsoft.AspNetCore.Http;
@@ -9,7 +9,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-namespace GymSite.Application.Auth
+namespace GymSite.Application
 {
     [Implementation(typeof(IAuthService))]
     public class AuthService : IAuthService

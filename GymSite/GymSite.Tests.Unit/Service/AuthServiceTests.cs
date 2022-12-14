@@ -1,4 +1,4 @@
-﻿using GymSite.Application.Auth;
+﻿using GymSite.Application;
 using GymSite.Domain.Entity;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -44,8 +44,7 @@ namespace GymSite.Tests.Unit.Service
             var userPrincipal = new ClaimsPrincipal();
             userPrincipal.AddIdentity(new ClaimsIdentity(new List<Claim> { new Claim(JwtRegisteredClaimNames.Sub, UserId) }));
             httpContextAccessorMock.Setup(x => x.HttpContext.User).Returns(userPrincipal);
-            userManagerMock
-                .Setup(x => x.GetUserId(It.IsAny<ClaimsPrincipal>()))
+            userManagerMock.Setup(x => x.GetUserId(It.IsAny<ClaimsPrincipal>()))
                 .Returns((ClaimsPrincipal principal) 
                     => principal.Identities.First().Claims.First(x => x.Type == JwtRegisteredClaimNames.Sub).Value);
 

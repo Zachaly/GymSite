@@ -1,7 +1,7 @@
-﻿using GymSite.Application.Auth.Abstractions;
-using GymSite.Application.User.Abstractions;
-using GymSite.Application.User.Commands;
+﻿using GymSite.Application.Abstractions;
+using GymSite.Application.Commands;
 using GymSite.Domain.Entity;
+using GymSite.Domain.Enum;
 using GymSite.Models.Response;
 using GymSite.Models.User.Request;
 using Moq;
@@ -30,8 +30,7 @@ namespace GymSite.Tests.Unit.Command
                     user.UserInfo.Gender = request.Gender ?? user.UserInfo.Gender;
                 }).ReturnsAsync(new ResponseModel
                 {
-                    Code = ResponseCode.NoContent,
-                    Errors = null,
+                    ValidationErrors = null,
                     Message = "msg",
                     Success = true,
                 });
@@ -40,7 +39,7 @@ namespace GymSite.Tests.Unit.Command
             {
                 NickName = "new nickname",
                 FirstName = "new fname",
-                Gender = Domain.Enum.Gender.Male,
+                Gender = Gender.Male,
                 LastName = "new lname"
             };
 

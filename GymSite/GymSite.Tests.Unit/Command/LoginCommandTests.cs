@@ -1,7 +1,7 @@
-﻿using GymSite.Application.Auth.Abstractions;
-using GymSite.Application.Auth.Commands;
-using GymSite.Application.Response.Abstractions;
-using GymSite.Database.User;
+﻿using GymSite.Application;
+using GymSite.Application.Abstractions;
+using GymSite.Application.Commands;
+using GymSite.Database.Repository.Abstractions;
 using GymSite.Domain.Entity;
 using GymSite.Models.Response;
 using GymSite.Models.User.Response;
@@ -41,13 +41,12 @@ namespace GymSite.Tests.Unit.Command
                 .ReturnsAsync(new List<Claim> { new Claim("Role", "Admin") });
 
             var responseFactoryMock = new Mock<IResponseFactory>();
-            responseFactoryMock.Setup(x => x.CreateSuccess(It.IsAny<ResponseCode>(), It.IsAny<string>(), It.IsAny<LoginResponse>()))
-                .Returns((ResponseCode code, string message, LoginResponse data) 
+            responseFactoryMock.Setup(x => x.CreateSuccess(It.IsAny<LoginResponse>(), It.IsAny<string>()))
+                .Returns((LoginResponse data, string message) 
                     => new DataResponseModel<LoginResponse>
                     {
                         Data = data,
-                        Code = code,
-                        Errors = null,
+                        ValidationErrors = null,
                         Message = message,
                         Success = true
                     }
@@ -75,7 +74,6 @@ namespace GymSite.Tests.Unit.Command
             Assert.Multiple(() =>
             {
                 Assert.That(res.Success);
-                Assert.That(res.Code, Is.EqualTo(ResponseCode.Ok));
                 Assert.That(res.Data.AuthToken, Is.Not.Empty);
                 Assert.That(res.Data.UserId, Is.Not.Empty);
                 Assert.That(res.Data.Username, Is.EqualTo(command.Username));
@@ -99,13 +97,12 @@ namespace GymSite.Tests.Unit.Command
                 .ReturnsAsync(new List<Claim>());
 
             var responseFactoryMock = new Mock<IResponseFactory>();
-            responseFactoryMock.Setup(x => x.CreateFail<LoginResponse>(It.IsAny<ResponseCode>(), It.IsAny<string>(), null))
-                .Returns((ResponseCode code, string message, LoginResponse data)
+            responseFactoryMock.Setup(x => x.CreateFail<LoginResponse>(It.IsAny<string>(), null))
+                .Returns((string message, object _)
                     => new DataResponseModel<LoginResponse>
                     {
                         Data = null,
-                        Code = code,
-                        Errors = null,
+                        ValidationErrors = null,
                         Message = message,
                         Success = false
                     }
@@ -133,7 +130,6 @@ namespace GymSite.Tests.Unit.Command
             Assert.Multiple(() =>
             {
                 Assert.That(!res.Success);
-                Assert.That(res.Code, Is.EqualTo(ResponseCode.BadRequest));
                 Assert.That(res.Data, Is.Null);
             });
         }
@@ -154,13 +150,12 @@ namespace GymSite.Tests.Unit.Command
                 .ReturnsAsync(new List<Claim>());
                 
             var responseFactoryMock = new Mock<IResponseFactory>();
-            responseFactoryMock.Setup(x => x.CreateFail<LoginResponse>(It.IsAny<ResponseCode>(), It.IsAny<string>(), null))
-                .Returns((ResponseCode code, string message, LoginResponse data)
+            responseFactoryMock.Setup(x => x.CreateFail<LoginResponse>(It.IsAny<string>(), null))
+                .Returns((string message, object _)
                     => new DataResponseModel<LoginResponse>
                     {
                         Data = null,
-                        Code = code,
-                        Errors = null,
+                        ValidationErrors = null,
                         Message = message,
                         Success = false
                     }
@@ -188,7 +183,6 @@ namespace GymSite.Tests.Unit.Command
             Assert.Multiple(() =>
             {
                 Assert.That(!res.Success);
-                Assert.That(res.Code, Is.EqualTo(ResponseCode.BadRequest));
                 Assert.That(res.Data, Is.Null);
             });
         }

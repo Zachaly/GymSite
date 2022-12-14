@@ -1,15 +1,14 @@
-﻿using GymSite.Application.Auth.Abstractions;
-using GymSite.Application.Response.Abstractions;
-using GymSite.Database.User;
-using GymSite.Domain.Entity;
+﻿using GymSite.Domain.Entity;
 using GymSite.Models.Response;
 using GymSite.Models.User.Response;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using GymSite.Application.Abstractions;
+using GymSite.Database.Repository.Abstractions;
 
-namespace GymSite.Application.Auth.Commands
+namespace GymSite.Application.Commands
 {
     public class LoginCommand : IRequest<DataResponseModel<LoginResponse>>
     {
@@ -65,11 +64,11 @@ namespace GymSite.Application.Auth.Commands
                 Claims = GetRoleClaims(claims)
             };
 
-            return _responseFactory.CreateSuccess(ResponseCode.Ok, "", data);
+            return _responseFactory.CreateSuccess(data);
         }
 
         private DataResponseModel<LoginResponse> CreateFail()
-            => _responseFactory.CreateFail<LoginResponse>(ResponseCode.BadRequest, "Username or password incorrect!", null);
+            => _responseFactory.CreateFail<LoginResponse>("Username or password incorrect!", null);
 
         private IEnumerable<string> GetRoleClaims(IEnumerable<Claim> claims)
             => claims.Where(claim => claim.Type == "Role").Select(claim => claim.Value);

@@ -1,4 +1,4 @@
-﻿using GymSite.Database.User;
+﻿using GymSite.Database.Repository;
 using GymSite.Domain.Entity;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,9 +12,9 @@ namespace GymSite.Tests.Unit.Repository
         {
             var userList = new List<ApplicationUser>
             {
-                new ApplicationUser {Id = "id1", UserName = "name1", NickName = "nick" },
-                new ApplicationUser {Id = "id2", UserName = "name2", NickName = "nick" },
-                new ApplicationUser {Id = "id3", UserName = "name3", NickName = "nick" },
+                new ApplicationUser { Id = "id1", UserName = "name1", NickName = "nick" },
+                new ApplicationUser { Id = "id2", UserName = "name2", NickName = "nick" },
+                new ApplicationUser { Id = "id3", UserName = "name3", NickName = "nick" },
             };
 
             var dbContext = CreateDbContext();
@@ -38,9 +38,9 @@ namespace GymSite.Tests.Unit.Repository
         {
             var userList = new List<ApplicationUser>
             {
-                new ApplicationUser {Id = "id1", UserName = "name1", NickName = "nick" },
-                new ApplicationUser {Id = "id2", UserName = "name2", NickName = "nick", UserInfoId = 1 },
-                new ApplicationUser {Id = "id3", UserName = "name3", NickName = "nick" },
+                new ApplicationUser { Id = "id1", UserName = "name1", NickName = "nick" },
+                new ApplicationUser { Id = "id2", UserName = "name2", NickName = "nick", UserInfoId = 1 },
+                new ApplicationUser { Id = "id3", UserName = "name3", NickName = "nick" },
             };
 
             var userInfo = new List<UserInfo>
@@ -70,9 +70,9 @@ namespace GymSite.Tests.Unit.Repository
         {
             var userList = new List<ApplicationUser>
             {
-                new ApplicationUser {Id = "id1", UserName = "name1", NickName = "nick" },
-                new ApplicationUser {Id = "id2", UserName = "name2", NickName = "nick", UserInfoId = 1 },
-                new ApplicationUser {Id = "id3", UserName = "name3", NickName = "nick" },
+                new ApplicationUser { Id = "id1", UserName = "name1", NickName = "nick" },
+                new ApplicationUser { Id = "id2", UserName = "name2", NickName = "nick", UserInfoId = 1 },
+                new ApplicationUser { Id = "id3", UserName = "name3", NickName = "nick" },
             };
 
             var userInfo = new List<UserInfo>

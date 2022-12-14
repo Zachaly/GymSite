@@ -1,5 +1,6 @@
 ﻿using GymSite.Api.Infrastructure;
 using GymSite.Application.Abstractions;
+using GymSite.Models.Exercise;
 using GymSite.Models.Exercise.Request;
 using GymSite.Models.Response;
 using Microsoft.AspNetCore.Mvc;
@@ -25,11 +26,11 @@ namespace GymSite.Api.Controllers
         }
 
         [HttpGet("{id}")]
-        public ActionResult<ResponseModel> GetExercise(int id)
+        public ActionResult<DataResponseModel<ExerciseModel>> GetExercise(int id)
         {
             var res = _exerciseService.GetExerciseById(id);
 
-            return res.CreateOkOrBadRequest();
+            return res.CreateOkOrNotFound();
         }
 
         [HttpPost]

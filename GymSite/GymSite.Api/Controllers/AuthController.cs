@@ -1,7 +1,6 @@
 ﻿using GymSite.Api.Infrastructure;
-using GymSite.Application.Auth.Abstractions;
-using GymSite.Application.Auth.Commands;
-using GymSite.Application.User.Abstractions;
+using GymSite.Application.Abstractions;
+using GymSite.Application.Commands;
 using GymSite.Models.Response;
 using GymSite.Models.User.Request;
 using MediatR;

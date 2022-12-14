@@ -1,5 +1,5 @@
 using GymSite.Api.Infrastructure;
-using GymSite.Application.Auth.Commands;
+using GymSite.Application.Commands;
 using GymSite.Database;
 using GymSite.Domain.Entity;
 using MediatR;

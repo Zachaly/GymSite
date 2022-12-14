@@ -1,4 +1,6 @@
-﻿namespace GymSite.Database.User
+﻿using GymSite.Database.Repository.Abstractions;
+
+namespace GymSite.Database.Repository
 {
     [Implementation(typeof(IUserInfoRepository))]
     public class UserInfoRepository : IUserInfoRepository

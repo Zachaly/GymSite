@@ -1,7 +1,8 @@
 ﻿using GymSite.Api.Infrastructure;
-using GymSite.Application.User.Abstractions;
-using GymSite.Application.User.Commands;
+using GymSite.Application.Abstractions;
+using GymSite.Application.Commands;
 using GymSite.Models.Response;
+using GymSite.Models.User;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -21,11 +22,11 @@ namespace GymSite.Api.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<ResponseModel>> GetUserById(string id)
+        public async Task<ActionResult<DataResponseModel<UserModel>>> GetUserById(string id)
         {
             var res = await _userService.GetUserById(id);
 
-            return res.CreateOkOrBadRequest();
+            return res.CreateOkOrNotFound();
         }
 
         [HttpPut]

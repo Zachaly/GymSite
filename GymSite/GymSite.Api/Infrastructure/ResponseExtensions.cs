@@ -20,5 +20,13 @@ namespace GymSite.Api.Infrastructure
             else
                 return new BadRequestObjectResult(response);
         }
+
+        public static ActionResult<DataResponseModel<T>> CreateOkOrNotFound<T>(this DataResponseModel<T> response)
+        {
+            if(response.Data is null)
+                return new NotFoundObjectResult(response);
+
+            return new OkObjectResult(response);
+        }
     }
 }

@@ -1,4 +1,4 @@
-﻿using GymSite.Application.Response;
+﻿using GymSite.Application;
 using GymSite.Models.Response;
 
 namespace GymSite.Tests.Unit.Factory
@@ -11,18 +11,16 @@ namespace GymSite.Tests.Unit.Factory
         {
             var factory = new ResponseFactory();
 
-            const ResponseCode Code = ResponseCode.Ok;
             const string Message = "message";
 
-            var response = factory.CreateSuccess(Code, Message);
+            var response = factory.CreateSuccess(Message);
 
             Assert.Multiple(() =>
             {
                 Assert.That(response, Is.Not.Null);
                 Assert.That(response.Success, Is.True);
-                Assert.That(response.Code, Is.EqualTo(Code));
                 Assert.That(response.Message, Is.EqualTo(Message));
-                Assert.That(response.Errors, Is.Null);
+                Assert.That(response.ValidationErrors, Is.Null);
             });
         }
 
@@ -31,19 +29,17 @@ namespace GymSite.Tests.Unit.Factory
         {
             var factory = new ResponseFactory();
 
-            const ResponseCode Code = ResponseCode.BadRequest;
             const string Message = "message";
             var errors = new Dictionary<string, IEnumerable<string>>();
 
-            var response = factory.CreateFail(Code, Message, errors);
+            var response = factory.CreateFail(Message, errors);
 
             Assert.Multiple(() =>
             {
                 Assert.That(response, Is.Not.Null);
                 Assert.That(response.Success, Is.False);
-                Assert.That(response.Code, Is.EqualTo(Code));
                 Assert.That(response.Message, Is.EqualTo(Message));
-                Assert.That(response.Errors, Is.EquivalentTo(errors));
+                Assert.That(response.ValidationErrors, Is.EquivalentTo(errors));
             });
         }
 
@@ -52,19 +48,17 @@ namespace GymSite.Tests.Unit.Factory
         {
             var factory = new ResponseFactory();
 
-            const ResponseCode Code = ResponseCode.Ok;
             const string Message = "message";
             const int Data = 2137;
 
-            var response = factory.CreateSuccess(Code, Message, Data);
+            var response = factory.CreateSuccess(Data, Message);
 
             Assert.Multiple(() =>
             {
                 Assert.That(response, Is.Not.Null);
                 Assert.That(response.Success, Is.True);
-                Assert.That(response.Code, Is.EqualTo(Code));
                 Assert.That(response.Message, Is.EqualTo(Message));
-                Assert.That(response.Errors, Is.Null);
+                Assert.That(response.ValidationErrors, Is.Null);
                 Assert.That(response.Data, Is.EqualTo(Data));
             });
         }
@@ -74,19 +68,17 @@ namespace GymSite.Tests.Unit.Factory
         {
             var factory = new ResponseFactory();
 
-            const ResponseCode Code = ResponseCode.BadRequest;
             const string Message = "message";
             var errors = new Dictionary<string, IEnumerable<string>>();
 
-            var response = factory.CreateFail<int?>(Code, Message, errors);
+            var response = factory.CreateFail<int?>(Message, errors);
 
             Assert.Multiple(() =>
             {
                 Assert.That(response, Is.Not.Null);
                 Assert.That(response.Success, Is.False);
-                Assert.That(response.Code, Is.EqualTo(Code));
                 Assert.That(response.Message, Is.EqualTo(Message));
-                Assert.That(response.Errors, Is.EquivalentTo(errors));
+                Assert.That(response.ValidationErrors, Is.EquivalentTo(errors));
                 Assert.That(response.Data, Is.Null);
             });
         }

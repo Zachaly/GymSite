@@ -1,6 +1,5 @@
 ﻿using GymSite.Models.Response;
 using Microsoft.AspNetCore.Mvc;
-using System.Text.Json;
 
 namespace GymSite.Api.Controllers
 {

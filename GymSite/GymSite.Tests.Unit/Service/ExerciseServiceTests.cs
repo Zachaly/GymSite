@@ -1,6 +1,5 @@
 ﻿using GymSite.Application;
 using GymSite.Application.Abstractions;
-using GymSite.Application.Response.Abstractions;
 using GymSite.Database.Repository.Abstractions;
 using GymSite.Domain.Entity;
 using GymSite.Models.Exercise;
@@ -25,7 +24,7 @@ namespace GymSite.Tests.Unit.Service
 
             var responseFactoryMock = new Mock<IResponseFactory>();
 
-            responseFactoryMock.Setup(x => x.CreateSuccess(It.IsAny<ResponseCode>(), It.IsAny<string>()))
+            responseFactoryMock.Setup(x => x.CreateSuccess(It.IsAny<string>()))
                 .Returns(new ResponseModel { Success = true });
 
             var exerciseFactoryMock = new Mock<IExerciseFactory>();
@@ -72,8 +71,8 @@ namespace GymSite.Tests.Unit.Service
 
             var responseFactoryMock = new Mock<IResponseFactory>();
 
-            responseFactoryMock.Setup(x => x.CreateSuccess(It.IsAny<ResponseCode>(), It.IsAny<string>(), It.IsAny<ExerciseModel>()))
-                .Returns((ResponseCode _, string _, ExerciseModel data) => 
+            responseFactoryMock.Setup(x => x.CreateSuccess( It.IsAny<ExerciseModel>(),It.IsAny<string>()))
+                .Returns((ExerciseModel data, string _) => 
                     new DataResponseModel<ExerciseModel> { Success = true, Data = data });
 
             var exerciseFactoryMock = new Mock<IExerciseFactory>();
@@ -114,8 +113,8 @@ namespace GymSite.Tests.Unit.Service
 
             var responseFactoryMock = new Mock<IResponseFactory>();
 
-            responseFactoryMock.Setup(x => x.CreateSuccess(It.IsAny<ResponseCode>(), It.IsAny<string>(), It.IsAny<IEnumerable<ExerciseListItemModel>>()))
-                    .Returns((ResponseCode _, string _, IEnumerable<ExerciseListItemModel> data)
+            responseFactoryMock.Setup(x => x.CreateSuccess(It.IsAny<IEnumerable<ExerciseListItemModel>>(), ""))
+                    .Returns((IEnumerable<ExerciseListItemModel> data, string _)
                         => new DataResponseModel<IEnumerable<ExerciseListItemModel>> { Success = true, Data = data });
 
             var exerciseFactoryMock = new Mock<IExerciseFactory>();
@@ -156,7 +155,7 @@ namespace GymSite.Tests.Unit.Service
 
             var responseFactoryMock = new Mock<IResponseFactory>();
 
-            responseFactoryMock.Setup(x => x.CreateSuccess(It.IsAny<ResponseCode>(), It.IsAny<string>()))
+            responseFactoryMock.Setup(x => x.CreateSuccess(It.IsAny<string>()))
                 .Returns(new ResponseModel { Success = true });
 
             var exerciseFactoryMock = new Mock<IExerciseFactory>();
@@ -191,7 +190,7 @@ namespace GymSite.Tests.Unit.Service
 
             var responseFactoryMock = new Mock<IResponseFactory>();
 
-            responseFactoryMock.Setup(x => x.CreateFail(It.IsAny<ResponseCode>(), It.IsAny<string>(), null))
+            responseFactoryMock.Setup(x => x.CreateFail(It.IsAny<string>(), null))
                 .Returns(new ResponseModel { Success = false });
 
             var exerciseFactoryMock = new Mock<IExerciseFactory>();
