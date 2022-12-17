@@ -40,7 +40,8 @@ namespace GymSite.Tests.Unit.Factory
             {
                 Reps = 2,
                 Weight = 3,
-                Id = 4
+                Id = 4,
+                Date = new DateTime()
             };
 
             var model = factory.CreateModel(record);
@@ -50,6 +51,7 @@ namespace GymSite.Tests.Unit.Factory
                 Assert.That(model.Reps, Is.EqualTo(record.Reps));
                 Assert.That(model.Weight, Is.EqualTo(record.Weight.ToString()));
                 Assert.That(model.Id, Is.EqualTo(record.Id));
+                Assert.That(model.Date, Is.EqualTo(record.Date.ToString("dd.MM.yyyy")));
             });
         }
     }

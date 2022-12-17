@@ -3,6 +3,7 @@ using GymSite.Application.Abstractions;
 using GymSite.Models.Exercise;
 using GymSite.Models.Exercise.Request;
 using GymSite.Models.Response;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GymSite.Api.Controllers
@@ -24,6 +25,7 @@ namespace GymSite.Api.Controllers
         /// <response code="200">List of user exercises</response>
         [HttpGet("user/{userId}")]
         [ProducesResponseType(200)]
+        [Authorize]
         public ActionResult<DataResponseModel<IEnumerable<ExerciseListItemModel>>> GetUserExercices(string userId)
         {
             var res = _exerciseService.GetUserExercises(userId);
@@ -40,6 +42,7 @@ namespace GymSite.Api.Controllers
         [HttpGet("{id}")]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
+        [Authorize]
         public ActionResult<DataResponseModel<ExerciseModel>> GetExercise(int id)
         {
             var res = _exerciseService.GetExerciseById(id);
@@ -55,6 +58,7 @@ namespace GymSite.Api.Controllers
         [HttpPost]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
+        [Authorize]
         public async Task<ActionResult<ResponseModel>> AddExercise(AddExerciseRequest request)
         {
             var res = await _exerciseService.AddExercise(request);
@@ -71,11 +75,42 @@ namespace GymSite.Api.Controllers
         [HttpDelete("{id}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
+        [Authorize]
         public async Task<ActionResult<ResponseModel>> RemoveExercise(int id)
         {
             var res = await _exerciseService.RemoveExercise(id);
 
             return res.CreateNoContentOrBadRequest();
+        }
+
+        /// <summary>
+        /// Returns list of default exercises
+        /// </summary>
+        /// <response code="200">List of user exercises</response>
+        [HttpGet("default")]
+        [ProducesResponseType(200)]
+        [Authorize]
+        public ActionResult<DataResponseModel<IEnumerable<ExerciseListItemModel>>> GetDefault()
+        {
+            var res = _exerciseService.GetDefaultExercises();
+
+            return res.CreateOkOrBadRequest();
+        }
+
+        /// <summary>
+        /// Adds default exercise with data specified in request
+        /// </summary>
+        /// <response code="204">Exercise added successfully</response>
+        /// <response code="400">Failed to add exercise</response>
+        [HttpPost("default")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        [Authorize]
+        public async Task<ActionResult<ResponseModel>> AddDefault(AddExerciseRequest request)
+        {
+            var res = await _exerciseService.AddDefaultExercise(request);
+
+            return res.CreateOkOrBadRequest();
         }
     }
 }

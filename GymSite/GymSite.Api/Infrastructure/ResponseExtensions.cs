@@ -32,7 +32,7 @@ namespace GymSite.Api.Infrastructure
         public static ActionResult<DataResponseModel<T>> CreateOkOrBadRequest<T>(this DataResponseModel<T> response)
         {
             if (response.Success)
-                return new NoContentResult();
+                return new OkObjectResult(response);
             else
                 return new BadRequestObjectResult(response);
         }

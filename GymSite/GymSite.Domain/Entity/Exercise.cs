@@ -8,5 +8,6 @@
         public string? UserId { get; set; }
         public ApplicationUser? User { get; set; }
         public ICollection<ExerciseRecord> Records { get; set; }
+        public bool Default { get; set; }
     }
 }

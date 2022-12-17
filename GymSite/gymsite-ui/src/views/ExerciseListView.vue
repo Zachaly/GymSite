@@ -9,6 +9,7 @@
                 <tr v-for="exercise in exercises" :key="exercise.id">
                     <td class="has-text-centered is-vcentered">{{exercise.name}}</td>
                     <td class="has-text-centered"><router-link class="button" :to="'/exercise/' + exercise.id">Go to</router-link></td>
+                    <td v-if="exercise.removable" class="hax-text-centered"><button @click="remove(exercise.id)" class="button is-danger is-fullwidth">Remove</button></td>
                 </tr>
             </table>
             <button class="button is-success is-fullwidth" @click="router.push('/exercise/add')">Add exercise</button>
@@ -34,5 +35,10 @@ if(!authStore.authorized){
 const exercises = ref([])
 
 fetchStore.get('exercise/user/' + authStore.userId, res => exercises.value = res.data)
+
+function remove(id){
+    fetchStore.delete('exercise/' + id)
+        .then(() => exercises.value = exercises.value.filter(x => x.id !== id))
+}
 
 </script>

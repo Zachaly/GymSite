@@ -6,7 +6,7 @@ export const useFetchStore = defineStore('fetch', {
         get(path, handler) {
             return fetch(this.apiPath + path, {
                 headers: {
-                    'Authorization': 'Bearer' + this.token
+                    'Authorization': `Bearer ${this.token}`
                 },
             }).then(r => r.json())
                 .then(json => {
@@ -18,7 +18,7 @@ export const useFetchStore = defineStore('fetch', {
                 headers: {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json',
-                    'Authorization': 'Bearer ' + this.token
+                    'Authorization': `Bearer ${this.token}`
                 },
                 method: "POST",
                 body: JSON.stringify(body)
@@ -47,6 +47,16 @@ export const useFetchStore = defineStore('fetch', {
                 },
                 method: "PUT",
                 body: JSON.stringify(body)
+            }).catch(error => console.log(error))
+        },
+        delete(path){
+            return fetch(this.apiPath + path, {
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + this.token
+                },
+                method: "DELETE",
             }).catch(error => console.log(error))
         }
     }

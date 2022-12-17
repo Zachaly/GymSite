@@ -1,6 +1,7 @@
 ﻿using GymSite.Application.Abstractions;
 using GymSite.Database.Repository.Abstractions;
 using GymSite.Domain.Utils;
+using GymSite.Models.Record;
 using GymSite.Models.Record.Request;
 using GymSite.Models.Response;
 
@@ -21,13 +22,13 @@ namespace GymSite.Application
             _exerciseRecordRepository = exerciseRecordRepository;
         }
 
-        public async Task<ResponseModel> AddRecord(AddExerciseRecordRequest request)
+        public async Task<DataResponseModel<ExerciseRecordModel>> AddRecord(AddExerciseRecordRequest request)
         {
             var record = _exerciseRecordFactory.Create(request);
 
             await _exerciseRecordRepository.AddRecordAsync(record);
 
-            return _responseFactory.CreateSuccess();
+            return _responseFactory.CreateSuccess(_exerciseRecordFactory.CreateModel(record));
         }
 
         public async Task<ResponseModel> RemoveRecord(int id)

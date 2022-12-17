@@ -1,5 +1,6 @@
 ﻿using GymSite.Api.Infrastructure;
 using GymSite.Application.Abstractions;
+using GymSite.Models.Record;
 using GymSite.Models.Record.Request;
 using GymSite.Models.Response;
 using Microsoft.AspNetCore.Mvc;
@@ -19,16 +20,16 @@ namespace GymSite.Api.Controllers
         /// <summary>
         /// Creates an exercise record based on data in request
         /// </summary>
-        /// <response code="204">Record added successfully</response>
+        /// <response code="200">Record added successfully</response>
         /// <response code="404">Data in request is not viable</response>
         [HttpPost]
-        [ProducesResponseType(204)]
+        [ProducesResponseType(200)]
         [ProducesResponseType(404)]
-        public async Task<ActionResult<ResponseModel>> Post(AddExerciseRecordRequest request)
+        public async Task<ActionResult<DataResponseModel<ExerciseRecordModel>>> Post(AddExerciseRecordRequest request)
         {
             var res = await _exerciseRecordService.AddRecord(request);
 
-            return res.CreateNoContentOrBadRequest();
+            return res.CreateOkOrBadRequest();
         }
 
         /// <summary>

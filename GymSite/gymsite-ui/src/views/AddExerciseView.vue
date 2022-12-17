@@ -8,7 +8,7 @@
                 </div>
             </div>
             <div class="field">
-                <label class="label">Name</label>
+                <label class="label">Description</label>
                 <div class="control">
                     <textarea class="input" v-model="exerciseModel.description"></textarea>
                 </div>
@@ -38,7 +38,7 @@ const exerciseModel = ref({
 
 const confirm = () => {
     fetchStore.postNoContent('exercise', exerciseModel.value)
-    router.push('/exercise')
+    .then(() => router.push('/exercise'))
 }
 
 </script>

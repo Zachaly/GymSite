@@ -2,6 +2,7 @@
 using GymSite.Application.Abstractions;
 using GymSite.Database.Repository.Abstractions;
 using GymSite.Domain.Entity;
+using GymSite.Models.Record;
 using GymSite.Models.Record.Request;
 using GymSite.Models.Response;
 using Moq;
@@ -17,8 +18,9 @@ namespace GymSite.Tests.Unit.Service
             var recordList = new List<ExerciseRecord>();
 
             var responseFactoryMock = new Mock<IResponseFactory>();
-            responseFactoryMock.Setup(x => x.CreateSuccess(""))
-                .Returns(new ResponseModel { Success = true });
+            responseFactoryMock.Setup(x => x.CreateSuccess(It.IsAny<ExerciseRecordModel>(),""))
+                .Returns((ExerciseRecordModel data, string _) => 
+                    new DataResponseModel<ExerciseRecordModel> { Success = true, Data = data });
 
             var repositoryMock = new Mock<IExerciseRecordRepository>();
             repositoryMock.Setup(x => x.AddRecordAsync(It.IsAny<ExerciseRecord>()))
@@ -27,6 +29,8 @@ namespace GymSite.Tests.Unit.Service
             var factoryMock = new Mock<IExerciseRecordFactory>();
             factoryMock.Setup(x => x.Create(It.IsAny<AddExerciseRecordRequest>()))
                 .Returns((AddExerciseRecordRequest request) => new ExerciseRecord { Reps = request.Reps });
+            factoryMock.Setup(x => x.CreateModel(It.IsAny<ExerciseRecord>()))
+                .Returns((ExerciseRecord record) => new ExerciseRecordModel { Reps = record.Reps });
 
             var service = new ExerciseRecordService(responseFactoryMock.Object, repositoryMock.Object, factoryMock.Object);
 
@@ -39,6 +43,7 @@ namespace GymSite.Tests.Unit.Service
                 Assert.That(res.Success);
                 Assert.That(recordList.Any(x => x.Reps == request.Reps));
                 Assert.That(recordList.Count, Is.EqualTo(1));
+                Assert.That(res.Data.Reps, Is.EqualTo(request.Reps));
             });
         }
 

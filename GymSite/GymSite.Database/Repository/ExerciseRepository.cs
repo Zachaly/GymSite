@@ -20,6 +20,11 @@ namespace GymSite.Database.Repository
             return _dbContext.SaveChangesAsync();
         }
 
+        public IEnumerable<T> GetDefaultExercises<T>(Func<Exercise, T> selector)
+            => _dbContext.Exercise
+                .Where(exercise => exercise.Default)
+                .Select(selector);
+
         public T GetExerciseById<T>(int id, Func<Exercise, T> selector)
             => _dbContext.Exercise
                 .Include(exercise => exercise.Records)
@@ -27,9 +32,9 @@ namespace GymSite.Database.Repository
                 .Select(selector)
                 .FirstOrDefault();
 
-        public IEnumerable<T> GetExercisesByUserId<T>(string userId, Func<Exercise, T> selector)
+        public IEnumerable<T> GetExercisesByUserIdWithDefaults<T>(string userId, Func<Exercise, T> selector)
             => _dbContext.Exercise
-                .Where(exercise => exercise.UserId == userId)
+                .Where(exercise => exercise.UserId == userId || exercise.Default)
                 .Select(selector);
 
         public Task RemoveExerciseByIdAsync(int id)

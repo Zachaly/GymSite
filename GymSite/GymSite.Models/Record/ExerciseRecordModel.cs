@@ -5,5 +5,6 @@
         public int Id { get; set; }
         public string Weight { get; set; }
         public int Reps { get; set; }
+        public string Date { get; set; }
     }
 }

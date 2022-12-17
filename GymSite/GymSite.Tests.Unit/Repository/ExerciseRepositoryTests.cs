@@ -95,6 +95,14 @@ namespace GymSite.Tests.Unit.Repository
                     Name = "name3",
                     UserId = "id"
                 },
+                new Exercise
+                {
+                    Id = 5,
+                    Description = "desc3",
+                    Name = "name3",
+                    UserId = "id",
+                    Default = true
+                },
             };
 
             var dbContext = CreateDbContext();
@@ -104,12 +112,12 @@ namespace GymSite.Tests.Unit.Repository
 
             const string UserId = "id";
 
-            var res = repository.GetExercisesByUserId(UserId, x => x);
+            var res = repository.GetExercisesByUserIdWithDefaults(UserId, x => x);
 
             Assert.Multiple(() =>
             {
                 Assert.That(res.All(x => x.UserId == UserId));
-                Assert.That(res, Is.EquivalentTo(exercises.Where(x => x.UserId == UserId)));
+                Assert.That(res, Is.EquivalentTo(exercises.Where(x => x.UserId == UserId || x.Default)));
             });
         }
 
@@ -151,6 +159,54 @@ namespace GymSite.Tests.Unit.Repository
             await repository.RemoveExerciseByIdAsync(ExerciseId);
 
             Assert.That(!dbContext.Exercise.Any(x => x.Id == ExerciseId));
+        }
+
+        [Test]
+        public void GetDefaultExercises()
+        {
+            var exercises = new List<Exercise>
+            {
+                new Exercise
+                {
+                    Id = 2,
+                    Description = "desc",
+                    Name = "name",
+                    UserId = "id"
+                },
+                new Exercise
+                {
+                    Id = 3,
+                    Description = "desc2",
+                    Name = "name2",
+                    UserId = "id2",
+                    Default = true
+                },
+                new Exercise
+                {
+                    Id = 4,
+                    Description = "desc3",
+                    Name = "name3",
+                    UserId = "id"
+                },
+                new Exercise
+                {
+                    Id = 5,
+                    Description = "desc3",
+                    Name = "name3",
+                    UserId = "id",
+                    Default = true
+                },
+            };
+
+            var dbContext = CreateDbContext();
+            dbContext.AddContent(exercises);
+
+            var repository = new ExerciseRepository(dbContext);
+
+
+            var res = repository.GetDefaultExercises(x => x);
+
+            Assert.That(res, Is.EquivalentTo(exercises.Where(x => x.Default)));
         }
     }
 }

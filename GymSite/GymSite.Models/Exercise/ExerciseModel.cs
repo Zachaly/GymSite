@@ -8,5 +8,6 @@ namespace GymSite.Models.Exercise
         public string Name { get; set; }
         public string Description { get; set; }
         public IEnumerable<ExerciseRecordModel> Records { get; set; }
+        public bool Removable { get; set; }
     }
 }

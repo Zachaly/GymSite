@@ -9,5 +9,6 @@ namespace GymSite.Application.Abstractions
         Exercise Create(AddExerciseRequest request);
         ExerciseModel CreateModel(Exercise exercise);
         ExerciseListItemModel CreateListItem(Exercise exercise);
+        Exercise CreateDefault(AddExerciseRequest request);
     }
 }

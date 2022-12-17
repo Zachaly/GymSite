@@ -10,5 +10,7 @@ namespace GymSite.Application.Abstractions
         DataResponseModel<IEnumerable<ExerciseListItemModel>> GetUserExercises(string userId);
         Task<ResponseModel> AddExercise(AddExerciseRequest request);
         Task<ResponseModel> RemoveExercise(int id);
+        Task<ResponseModel> AddDefaultExercise(AddExerciseRequest request);
+        DataResponseModel<IEnumerable<ExerciseListItemModel>> GetDefaultExercises();
     }
 }

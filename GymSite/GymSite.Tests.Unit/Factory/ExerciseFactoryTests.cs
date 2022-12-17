@@ -16,7 +16,7 @@ namespace GymSite.Tests.Unit.Factory
             {
                 Name = "Test",
                 UserId = "id",
-                Description = "Description",
+                Description = "Description"
             };
 
             var exercise = factory.Create(request);
@@ -26,11 +26,37 @@ namespace GymSite.Tests.Unit.Factory
                 Assert.That(exercise.Name, Is.EqualTo(request.Name));
                 Assert.That(exercise.UserId, Is.EqualTo(request.UserId));
                 Assert.That(exercise.Description, Is.EqualTo(request.Description));
+                Assert.That(exercise.Default, Is.EqualTo(false));
             });
         }
 
         [Test]
-        public void Create_Model()
+        public void Create_Default()
+        {
+            var factory = new ExerciseFactory();
+
+            var request = new AddExerciseRequest
+            {
+                Name = "Test",
+                UserId = "id",
+                Description = "Description"
+            };
+
+            var exercise = factory.CreateDefault(request);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(exercise.Name, Is.EqualTo(request.Name));
+                Assert.That(exercise.UserId, Is.EqualTo(request.UserId));
+                Assert.That(exercise.Description, Is.EqualTo(request.Description));
+                Assert.That(exercise.Default);
+            });
+        }
+
+        [Test]
+        [TestCase(false)]
+        [TestCase(true)]
+        public void Create_Model(bool @default)
         {
             var factory = new ExerciseFactory();
 
@@ -43,6 +69,7 @@ namespace GymSite.Tests.Unit.Factory
                 {
                     new ExerciseRecord()
                 },
+                Default = @default
             };
 
             var model = factory.CreateModel(exercise);
@@ -53,11 +80,14 @@ namespace GymSite.Tests.Unit.Factory
                 Assert.That(model.Name, Is.EqualTo(exercise.Name));
                 Assert.That(model.Records, Is.Not.Null);
                 Assert.That(model.Description, Is.EqualTo(exercise.Description));
+                Assert.That(model.Removable, Is.EqualTo(!exercise.Default));
             });
         }
 
         [Test]
-        public void Create_ListItem()
+        [TestCase(false)]
+        [TestCase(true)]
+        public void Create_ListItem(bool @default)
         {
             var factory = new ExerciseFactory();
 
@@ -65,6 +95,7 @@ namespace GymSite.Tests.Unit.Factory
             {
                 Name = "Test",
                 Id = 1,
+                Default = @default
             };
 
             var model = factory.CreateListItem(exercise);
@@ -73,6 +104,7 @@ namespace GymSite.Tests.Unit.Factory
             {
                 Assert.That(model.Id, Is.EqualTo(exercise.Id));
                 Assert.That(model.Name, Is.EqualTo(exercise.Name));
+                Assert.That(model.Removable, Is.EqualTo(!exercise.Default));
             });
         }
     }

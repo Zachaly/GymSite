@@ -16,6 +16,7 @@ namespace GymSite.Application
                 Reps = request.Reps,
                 UserId = request.UserId,
                 Weight = request.Weight,
+                Date = DateTime.Now,
             };
 
         public ExerciseRecordModel CreateModel(ExerciseRecord record)
@@ -24,6 +25,7 @@ namespace GymSite.Application
                 Id = record.Id,
                 Reps = record.Reps,
                 Weight = record.Weight.ToString(),
+                Date = record.Date.ToString("dd.MM.yyyy")
             };
     }
 }

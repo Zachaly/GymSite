@@ -54,6 +54,48 @@ namespace GymSite.Tests.Unit.Service
         }
 
         [Test]
+        public async Task AddExercise_Default()
+        {
+            var exerciseList = new List<Exercise>();
+
+            var repositoryMock = new Mock<IExerciseRepository>();
+
+            repositoryMock.Setup(x => x.AddExerciseAsync(It.IsAny<Exercise>()))
+                .Callback((Exercise exercise) => exerciseList.Add(exercise));
+
+            var responseFactoryMock = new Mock<IResponseFactory>();
+
+            responseFactoryMock.Setup(x => x.CreateSuccess(It.IsAny<string>()))
+                .Returns(new ResponseModel { Success = true });
+
+            var exerciseFactoryMock = new Mock<IExerciseFactory>();
+
+            exerciseFactoryMock.Setup(x => x.CreateDefault(It.IsAny<AddExerciseRequest>()))
+                .Returns((AddExerciseRequest request) => new Exercise
+                {
+                    Name = request.Name,
+                    Default = true
+                });
+
+            var service = new ExerciseService(repositoryMock.Object, responseFactoryMock.Object, exerciseFactoryMock.Object);
+
+            var request = new AddExerciseRequest
+            {
+                Description = "desc",
+                Name = "name",
+                UserId = "userId",
+            };
+
+            var res = await service.AddDefaultExercise(request);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(exerciseList.Any(x => x.Name == request.Name && x.Default));
+                Assert.That(res.Success);
+            });
+        }
+
+        [Test]
         public async Task GetExerciseById()
         {
             var exerciseList = new List<Exercise>
@@ -107,7 +149,7 @@ namespace GymSite.Tests.Unit.Service
 
             var repositoryMock = new Mock<IExerciseRepository>();
 
-            repositoryMock.Setup(x => x.GetExercisesByUserId(It.IsAny<string>(), It.IsAny<Func<Exercise, ExerciseListItemModel>>()))
+            repositoryMock.Setup(x => x.GetExercisesByUserIdWithDefaults(It.IsAny<string>(), It.IsAny<Func<Exercise, ExerciseListItemModel>>()))
                 .Returns((string id, Func<Exercise, ExerciseListItemModel> selector) 
                     => exerciseList.Where(x => x.UserId == id).Select(selector).ToList());
 
@@ -133,6 +175,48 @@ namespace GymSite.Tests.Unit.Service
             Assert.Multiple(() =>
             {
                 Assert.That(res.Data.Count(), Is.EqualTo(exerciseList.Where(x => x.UserId == UserId).Count()));
+                Assert.That(res.Success);
+            });
+        }
+
+        [Test]
+        public async Task GetDefaultExercises()
+        {
+            var exerciseList = new List<Exercise>
+            {
+                new Exercise { Id = 1, UserId = "id" },
+                new Exercise { Id = 2, UserId = "id2", Default = true },
+                new Exercise { Id = 3, UserId = "id", Default = true },
+                new Exercise { Id = 3, UserId = "id" },
+            };
+
+            var repositoryMock = new Mock<IExerciseRepository>();
+
+            repositoryMock.Setup(x => x.GetDefaultExercises(It.IsAny<Func<Exercise, ExerciseListItemModel>>()))
+                .Returns((Func<Exercise, ExerciseListItemModel> selector)
+                    => exerciseList.Where(x => x.Default).Select(selector).ToList());
+
+            var responseFactoryMock = new Mock<IResponseFactory>();
+
+            responseFactoryMock.Setup(x => x.CreateSuccess(It.IsAny<IEnumerable<ExerciseListItemModel>>(), ""))
+                    .Returns((IEnumerable<ExerciseListItemModel> data, string _)
+                        => new DataResponseModel<IEnumerable<ExerciseListItemModel>> { Success = true, Data = data });
+
+            var exerciseFactoryMock = new Mock<IExerciseFactory>();
+
+            exerciseFactoryMock.Setup(x => x.CreateListItem(It.IsAny<Exercise>()))
+                .Returns((Exercise exercise) => new ExerciseListItemModel
+                {
+                    Id = exercise.Id,
+                });
+
+            var service = new ExerciseService(repositoryMock.Object, responseFactoryMock.Object, exerciseFactoryMock.Object);
+
+            var res = service.GetDefaultExercises();
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(res.Data.Count(), Is.EqualTo(exerciseList.Where(x => x.Default).Count()));
                 Assert.That(res.Success);
             });
         }

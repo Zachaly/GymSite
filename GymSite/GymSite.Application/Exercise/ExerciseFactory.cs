@@ -16,6 +16,16 @@ namespace GymSite.Application
                 Description = request.Description,
                 Name = request.Name,
                 UserId = request.UserId,
+                Default = false
+            };
+
+        public Exercise CreateDefault(AddExerciseRequest request)
+            => new Exercise
+            {
+                Description = request.Description,
+                Name = request.Name,
+                UserId = request.UserId,
+                Default = true
             };
 
         public ExerciseListItemModel CreateListItem(Exercise exercise)
@@ -23,6 +33,7 @@ namespace GymSite.Application
             {
                 Id = exercise.Id,
                 Name = exercise.Name,
+                Removable = !exercise.Default
             };
 
         public ExerciseModel CreateModel(Exercise exercise)
@@ -36,7 +47,8 @@ namespace GymSite.Application
                     Id = record.Id,
                     Reps = record.Reps,
                     Weight = record.Weight.ToString()
-                }).ToList()
+                }).ToList(),
+                Removable = !exercise.Default
             };
     }
 }
