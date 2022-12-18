@@ -2,7 +2,11 @@
     <nav class="navbar" role="navigation" aria-label="main navigation">
         <div class="container">
             <div class="navbar-menu">
-                <div v-if="authStore.authorized" class="navbar-start">
+                <div v-if="!authStore.authorized" class="navbar-start">
+                    <router-link to="/" class="navbar-item">Home</router-link>
+                </div>
+                <div v-else class="navbar-start">
+                    <router-link to="/" class="navbar-item">Home</router-link>
                     <router-link to="/exercise" class="navbar-item">Exercises</router-link>
                 </div>
                 <div v-if="!authStore.authorized" class="navbar-end" >

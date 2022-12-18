@@ -3,8 +3,7 @@
         <ul>
             <li 
             v-for="(tab, index) in props.tabs" :key="tab" 
-            :class="{'is-active': currentIndex === index}"
-            >
+            :class="{'is-active': currentIndex === index}">
                 <a @click="changeTab(index)">{{tab}}</a>
             </li>
         </ul>

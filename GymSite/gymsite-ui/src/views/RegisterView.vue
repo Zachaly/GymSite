@@ -62,9 +62,9 @@
 </template>
 
 <script setup>
-const { useFetchStore }=require("@/stores/fetchStore");
-const { ref }=require("@vue/reactivity");
-const { useRouter }=require("vue-router");
+import { useFetchStore } from "@/stores/fetchStore";
+import { ref } from "@vue/reactivity";
+import { useRouter } from "vue-router";
 
 
 const fetchStore = useFetchStore()
@@ -86,9 +86,7 @@ function changeGender(value){
 }
 
 function confirm(){
-    fetchStore.post('auth/register', registerModel.value, r => {
-        console.log(r)
-        router.push('/login')
-    })
+    fetchStore.postNoContent('auth/register', registerModel.value)
+    .then(() => router.push('/login'))
 }
 </script>

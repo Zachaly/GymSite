@@ -17,7 +17,7 @@ const router = useRouter()
 const currentIndex = ref(0)
 
 if(!authStore.claims.includes('Admin')){
-    router.push('/')
+    router.push('/login')
 }
 
 function changeTab(num){

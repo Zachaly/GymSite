@@ -60,8 +60,6 @@ if(!authStore.authorized){
 
 const user = ref({})
 
-console.log(fetchStore.token)
-
 fetchStore.get('user/' + authStore.userId, 
     res => user.value = { 
         nickName: res.data.nickName,
@@ -75,6 +73,6 @@ function changeGender(num){
 }
 
 function confirm(){
-    fetchStore.put('user', user.value).then(() => router.push('/user/' + authStore.userId))
+    fetchStore.putNoContent('user', user.value).then(() => router.push('/user/' + authStore.userId))
 }
 </script>
