@@ -17,6 +17,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GymSite.Api", "GymSite.Api\
 EndProject
 Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "gymsite-ui", "gymsite-ui\gymsite-ui.esproj", "{1C457CF0-B924-46BB-BF04-FF6AF2FB83AD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GymSite.Tests.Integration", "GymSite.Tests.Integration\GymSite.Tests.Integration.csproj", "{FED60376-24EB-41AE-B084-49D2116E0DBD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -53,6 +55,10 @@ Global
 		{1C457CF0-B924-46BB-BF04-FF6AF2FB83AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1C457CF0-B924-46BB-BF04-FF6AF2FB83AD}.Release|Any CPU.Build.0 = Release|Any CPU
 		{1C457CF0-B924-46BB-BF04-FF6AF2FB83AD}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{FED60376-24EB-41AE-B084-49D2116E0DBD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FED60376-24EB-41AE-B084-49D2116E0DBD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FED60376-24EB-41AE-B084-49D2116E0DBD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FED60376-24EB-41AE-B084-49D2116E0DBD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

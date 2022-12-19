@@ -110,7 +110,7 @@ namespace GymSite.Api.Controllers
         {
             var res = await _exerciseService.AddDefaultExercise(request);
 
-            return res.CreateOkOrBadRequest();
+            return res.CreateNoContentOrBadRequest();
         }
     }
 }
