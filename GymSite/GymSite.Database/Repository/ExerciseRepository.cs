@@ -34,14 +34,20 @@ namespace GymSite.Database.Repository
                 .Where(exercise => exercise.Default)
                 .Select(selector);
 
-        public T GetExerciseById<T>(int id, Func<Exercise, T> selector)
-            => _dbContext.Exercise
-                .Include(exercise => exercise.Records)
+        public T GetExerciseById<T>(int exerciseId, string? userId, Func<Exercise, T> selector)
+        {
+            var exercise = _dbContext.Exercise
                 .Include(exercise => exercise.ExerciseFilters)
                 .ThenInclude(filter => filter.Filter)
-                .Where(exercise => exercise.Id == id)
-                .Select(selector)
-                .FirstOrDefault();
+                .FirstOrDefault(exercise => exercise.Id == exerciseId);
+
+            exercise.Records = _dbContext.ExerciseRecord
+                .Where(record => record.ExerciseId == exerciseId && record.UserId == userId)
+                .ToList();
+
+            return selector(exercise);
+        }
+            
 
         public IEnumerable<T> GetExercisesByUserIdWithDefaults<T>(string userId, Func<Exercise, T> selector)
             => _dbContext.Exercise

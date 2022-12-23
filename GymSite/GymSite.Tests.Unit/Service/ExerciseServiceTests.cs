@@ -107,8 +107,8 @@ namespace GymSite.Tests.Unit.Service
 
             var repositoryMock = new Mock<IExerciseRepository>();
 
-            repositoryMock.Setup(x => x.GetExerciseById(It.IsAny<int>(), It.IsAny<Func<Exercise, ExerciseModel>>()))
-                .Returns((int id, Func<Exercise, ExerciseModel> selector) 
+            repositoryMock.Setup(x => x.GetExerciseById(It.IsAny<int>(), It.IsAny<string?>(), It.IsAny<Func<Exercise, ExerciseModel>>()))
+                .Returns((int id, string? userId, Func<Exercise, ExerciseModel> selector) 
                     => exerciseList.Where(x => x.Id == id).Select(selector).FirstOrDefault());
 
             var responseFactoryMock = new Mock<IResponseFactory>();
@@ -128,7 +128,7 @@ namespace GymSite.Tests.Unit.Service
             var service = new ExerciseService(repositoryMock.Object, responseFactoryMock.Object, exerciseFactoryMock.Object);
             const int Id = 2;
 
-            var res = service.GetExerciseById(Id);
+            var res = service.GetExerciseById(Id, null);
 
             Assert.Multiple(() =>
             {

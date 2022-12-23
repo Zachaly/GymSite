@@ -48,11 +48,16 @@ namespace GymSite.Application
             return _responseFactory.CreateSuccess(data);
         }
 
-        public DataResponseModel<ExerciseModel> GetExerciseById(int id)
+        public DataResponseModel<ExerciseModel> GetExerciseById(int id, string? userId)
         {
-            var data = _exerciseRepository.GetExerciseById(id, exercise => _exerciseFactory.CreateModel(exercise));
-
-            return _responseFactory.CreateSuccess(data);
+            try
+            {
+                var data = _exerciseRepository.GetExerciseById(id, userId, exercise => _exerciseFactory.CreateModel(exercise));
+                return _responseFactory.CreateSuccess(data);
+            } catch (Exception ex)
+            {
+                return _responseFactory.CreateFail<ExerciseModel>(ex.Message, null);
+            }
         }
 
         public DataResponseModel<IEnumerable<ExerciseListItemModel>> GetExercisesWithFilter(GetExerciseRequest request)

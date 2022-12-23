@@ -61,17 +61,18 @@ namespace GymSite.Tests.Unit.Repository
 
             var dbContext = CreateDbContext();
             dbContext.AddContent(exercises);
-            dbContext.AddContent(new List<ExerciseRecord> { record });
+            dbContext.AddContent(new List<ExerciseRecord> { record, new ExerciseRecord { Exercise = testExercise, UserId = "id2" } });
 
             var repository = new ExerciseRepository(dbContext);
 
-            var res = repository.GetExerciseById(testExercise.Id, x => x);
+            var res = repository.GetExerciseById(testExercise.Id, record.UserId, x => x);
 
             Assert.Multiple(() =>
             {
                 Assert.That(res.Name, Is.EqualTo(testExercise.Name));
                 Assert.That(res.Description, Is.EqualTo(testExercise.Description));
                 Assert.That(res.Records, Is.Not.Null);
+                Assert.That(res.Records.All(x => x.UserId == record.UserId));
             });
         }
 

@@ -43,9 +43,9 @@ namespace GymSite.Api.Controllers
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
         [Authorize]
-        public ActionResult<DataResponseModel<ExerciseModel>> GetExercise(int id)
+        public ActionResult<DataResponseModel<ExerciseModel>> GetExercise(int id, [FromQuery] string? userId)
         {
-            var res = _exerciseService.GetExerciseById(id);
+            var res = _exerciseService.GetExerciseById(id, userId);
 
             return res.CreateOkOrNotFound();
         }

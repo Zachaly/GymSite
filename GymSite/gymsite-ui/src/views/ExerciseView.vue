@@ -45,7 +45,7 @@ const recordModel = reactive({
     weight: ''
 })
 
-fetchStore.get('exercise/' + id, res => exercise.value = res.data)
+fetchStore.getWithParams('exercise/' + id, { userId: authStore.userId }, res => exercise.value = res.data)
 
 
 function addRecord(){
