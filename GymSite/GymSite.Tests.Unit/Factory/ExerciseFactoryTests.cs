@@ -69,7 +69,8 @@ namespace GymSite.Tests.Unit.Factory
                 {
                     new ExerciseRecord()
                 },
-                Default = @default
+                Default = @default,
+                ExerciseFilters = new List<ExerciseExerciseFilter>()
             };
 
             var model = factory.CreateModel(exercise);
@@ -95,7 +96,8 @@ namespace GymSite.Tests.Unit.Factory
             {
                 Name = "Test",
                 Id = 1,
-                Default = @default
+                Default = @default,
+                ExerciseFilters = new List<ExerciseExerciseFilter>()
             };
 
             var model = factory.CreateListItem(exercise);

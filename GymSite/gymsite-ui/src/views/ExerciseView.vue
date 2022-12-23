@@ -1,8 +1,9 @@
 <template>
     <div class="columns is-centered">
         <div class="column is-4 has-text-centered">
-            <p class="title">{{exercise.name}}</p>
-            <p class="subtitle">{{exercise.description}}</p>
+            <p class="title">{{ exercise.name }}</p>
+            <p class="subtitle">{{ exercise.description }}</p>
+            <p class="subtitle"><span v-for="filter in exercise.filters" :key="filter">{{ filter }}</span></p>
             <table class="table is-fullwidth">
                 <label class="title has-text-centered">Records</label>
                 <tr>
@@ -46,6 +47,7 @@ const recordModel = reactive({
 
 fetchStore.get('exercise/' + id, res => exercise.value = res.data)
 
+
 function addRecord(){
     fetchStore.post('exercise-record', { 
         reps: parseInt(recordModel.reps),
@@ -58,3 +60,10 @@ function addRecord(){
 }
 
 </script>
+
+
+<style scoped>
+    span{
+        margin: 5px;
+    }
+</style>

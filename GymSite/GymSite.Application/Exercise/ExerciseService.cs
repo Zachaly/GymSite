@@ -27,7 +27,7 @@ namespace GymSite.Application
         {
             var exercise = _exerciseFactory.CreateDefault(request);
 
-            await _exerciseRepository.AddExerciseAsync(exercise);
+            await _exerciseRepository.AddExerciseAsync(exercise, request.FilterIds);
 
             return _responseFactory.CreateSuccess();
         }
@@ -36,7 +36,7 @@ namespace GymSite.Application
         {
             var exercise = _exerciseFactory.Create(request);
 
-            await _exerciseRepository.AddExerciseAsync(exercise);
+            await _exerciseRepository.AddExerciseAsync(exercise, request.FilterIds ?? new int[] { });
 
             return _responseFactory.CreateSuccess();
         }
@@ -51,6 +51,14 @@ namespace GymSite.Application
         public DataResponseModel<ExerciseModel> GetExerciseById(int id)
         {
             var data = _exerciseRepository.GetExerciseById(id, exercise => _exerciseFactory.CreateModel(exercise));
+
+            return _responseFactory.CreateSuccess(data);
+        }
+
+        public DataResponseModel<IEnumerable<ExerciseListItemModel>> GetExercisesWithFilter(GetExerciseRequest request)
+        {
+            var data = _exerciseRepository.GetExercisesWithFilter(request.UserId, request.FilterIds ?? new int[] { }, 
+                exercise => _exerciseFactory.CreateListItem(exercise));
 
             return _responseFactory.CreateSuccess(data);
         }

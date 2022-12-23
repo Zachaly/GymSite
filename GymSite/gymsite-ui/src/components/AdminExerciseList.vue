@@ -25,6 +25,12 @@
                         <textarea class="input" v-model="exerciseModel.description"></textarea>
                     </div>
                 </div>
+                <div class="field checkboxes">
+                    <div class="checkbox" v-for="filter in filters" :key="filter.id">
+                        <input type="checkbox" :value="filter.id" :id="filter.id" v-model="exerciseModel.filterIds">
+                        <label :for="filter.id">{{ filter.name }}</label>
+                    </div>
+                </div>
                 <div class="field">
                     <button class="button is-success" @click="confirm">Add</button>
                 </div>        
@@ -44,9 +50,13 @@ const exercises = ref([])
 const exerciseModel = ref({
     name: '',
     description: '',
-    userId: authStore.userId
+    userId: authStore.userId,
+    filterIds: []
 })
+const filters = ref([])
+
 fetchStore.get('exercise/default', res => exercises.value = res.data)
+fetchStore.get('exercise-filter', res => filters.value = res.data)
 
 function confirm(){
     fetchStore.postNoContent('exercise/default', exerciseModel.value)
@@ -61,3 +71,12 @@ function remove(id){
 }
 
 </script>
+
+<style scoped>
+    .checkboxes{
+        display: flex;
+    }
+    .checkbox{
+        margin: 5px;
+    }
+</style>

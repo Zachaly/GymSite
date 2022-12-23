@@ -2,6 +2,7 @@
 using GymSite.Models.Exercise;
 using GymSite.Models.Exercise.Request;
 using GymSite.Models.Response;
+using Microsoft.AspNetCore.WebUtilities;
 using System.Net.Http.Json;
 
 namespace GymSite.Tests.Integration
@@ -139,7 +140,8 @@ namespace GymSite.Tests.Integration
             {
                 Description = "desc",
                 Name = "name",
-                UserId = GetAuthenticatedUser().Id
+                UserId = GetAuthenticatedUser().Id,
+                FilterIds = new List<int>()
             };
 
             var response = await _httpClient.PostAsJsonAsync("api/exercise", request);
@@ -286,6 +288,7 @@ namespace GymSite.Tests.Integration
                 Description = "desc",
                 Name = "name",
                 UserId = "id",
+                FilterIds = new List<int>()
             };
 
             var response = await _httpClient.PostAsJsonAsync($"api/exercise/default", request);
@@ -307,6 +310,73 @@ namespace GymSite.Tests.Integration
             var response = await _httpClient.PostAsJsonAsync($"api/exercise/default", request);
 
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task GetExercisesWithFilter_Success()
+        {
+            await Authenticate();
+
+            var userId = GetAuthenticatedUser().Id;
+
+            var exercises = new List<Exercise>
+            {
+                new Exercise
+                {
+                    Default = true,
+                    Name = "ex1",
+                    UserId = userId,
+                    ExerciseFilters = new List<ExerciseExerciseFilter>
+                    {
+                        new ExerciseExerciseFilter { FilterId = 11 },
+                        new ExerciseExerciseFilter { FilterId = 12 },
+                        new ExerciseExerciseFilter { FilterId = 13 },
+                    }
+                },
+                new Exercise
+                {
+                    Name = "ex2",
+                    UserId = userId,
+                    ExerciseFilters = new List<ExerciseExerciseFilter>
+                    {
+                        new ExerciseExerciseFilter { FilterId = 10 },
+                        new ExerciseExerciseFilter { FilterId = 14 },
+                        new ExerciseExerciseFilter { FilterId = 15 },
+                    }
+                },
+                new Exercise
+                {
+                    Name = "ex3",
+                    UserId = userId,
+                    ExerciseFilters = new List<ExerciseExerciseFilter>
+                    {
+                        new ExerciseExerciseFilter { FilterId = 10 },
+                        new ExerciseExerciseFilter { FilterId = 16 },
+                        new ExerciseExerciseFilter { FilterId = 17 },
+                    }
+                },
+            };
+
+            await AddToDatabase(exercises);
+
+            var request = new GetExerciseRequest
+            {
+                UserId = userId,
+                FilterIds = new int[] { 10 }
+            };
+
+            var uri = QueryHelpers.AddQueryString("api/exercise/filter", new Dictionary<string, string>()
+            {
+                ["userId"] = request.UserId,
+                ["filterIds"] = request.FilterIds.ElementAt(0).ToString(),
+            });
+
+            var res = await _httpClient.GetAsync(uri);
+
+            var content = await res.Content.ReadFromJsonAsync<DataResponseModel<IEnumerable<ExerciseListItemModel>>>();
+
+            Assert.Equal(HttpStatusCode.OK, res.StatusCode);
+            Assert.Equal(2, content.Data.Count());
         }
     }
 }

@@ -112,5 +112,19 @@ namespace GymSite.Api.Controllers
 
             return res.CreateNoContentOrBadRequest();
         }
+
+        /// <summary>
+        /// Gets user exercise with given filter ids
+        /// </summary>
+        /// <response code="200">Exercise model list</response>
+        [HttpGet("filter")]
+        [ProducesResponseType(200)]
+        [Authorize]
+        public ActionResult<DataResponseModel<IEnumerable<ExerciseListItemModel>>> GetWithFilters([FromQuery] GetExerciseRequest request)
+        {
+            var res = _exerciseService.GetExercisesWithFilter(request);
+
+            return res.CreateOkOrBadRequest();
+        }
     }
 }

@@ -19,8 +19,8 @@ namespace GymSite.Tests.Unit.Service
 
             var repositoryMock = new Mock<IExerciseRepository>();
 
-            repositoryMock.Setup(x => x.AddExerciseAsync(It.IsAny<Exercise>()))
-                .Callback((Exercise exercise) => exerciseList.Add(exercise));
+            repositoryMock.Setup(x => x.AddExerciseAsync(It.IsAny<Exercise>(), It.IsAny<IEnumerable<int>>()))
+                .Callback((Exercise exercise, IEnumerable<int> _) => exerciseList.Add(exercise));
 
             var responseFactoryMock = new Mock<IResponseFactory>();
 
@@ -60,8 +60,8 @@ namespace GymSite.Tests.Unit.Service
 
             var repositoryMock = new Mock<IExerciseRepository>();
 
-            repositoryMock.Setup(x => x.AddExerciseAsync(It.IsAny<Exercise>()))
-                .Callback((Exercise exercise) => exerciseList.Add(exercise));
+            repositoryMock.Setup(x => x.AddExerciseAsync(It.IsAny<Exercise>(), It.IsAny<IEnumerable<int>>()))
+                .Callback((Exercise exercise, IEnumerable<int> _) => exerciseList.Add(exercise));
 
             var responseFactoryMock = new Mock<IResponseFactory>();
 
@@ -175,6 +175,84 @@ namespace GymSite.Tests.Unit.Service
             Assert.Multiple(() =>
             {
                 Assert.That(res.Data.Count(), Is.EqualTo(exerciseList.Where(x => x.UserId == UserId).Count()));
+                Assert.That(res.Success);
+            });
+        }
+
+        [Test]
+        public async Task GetExerciseWithFilter()
+        {
+            var exerciseList = new List<Exercise>
+            {
+                new Exercise 
+                { 
+                    Id = 1,
+                    UserId = "id",
+                    ExerciseFilters = new List<ExerciseExerciseFilter> 
+                    { 
+                        new ExerciseExerciseFilter { ExerciseId = 1, FilterId = 10 },
+                        new ExerciseExerciseFilter { ExerciseId = 1, FilterId = 11 },
+                        new ExerciseExerciseFilter { ExerciseId = 1, FilterId = 12 },
+                    } 
+                },
+                new Exercise 
+                { 
+                    Id = 2,
+                    UserId = "id2",
+                    ExerciseFilters = new List<ExerciseExerciseFilter>
+                    {
+                        new ExerciseExerciseFilter { ExerciseId = 2, FilterId = 13 },
+                        new ExerciseExerciseFilter { ExerciseId = 2, FilterId = 11 },
+                        new ExerciseExerciseFilter { ExerciseId = 2, FilterId = 14 },
+                    }
+                },
+                new Exercise 
+                { 
+                    Id = 3,
+                    UserId = "id",
+                    ExerciseFilters = new List<ExerciseExerciseFilter>
+                    {
+                        new ExerciseExerciseFilter { ExerciseId = 3, FilterId = 11 },
+                        new ExerciseExerciseFilter { ExerciseId = 3, FilterId = 12 },
+                        new ExerciseExerciseFilter { ExerciseId = 3, FilterId = 13 },
+                    }
+                },
+            };
+
+            var repositoryMock = new Mock<IExerciseRepository>();
+
+            repositoryMock.Setup(x => x.GetExercisesWithFilter(It.IsAny<string>(), It.IsAny<IEnumerable<int>>(), It.IsAny<Func<Exercise, ExerciseListItemModel>>()))
+                .Returns((string id, IEnumerable<int> filters, Func<Exercise, ExerciseListItemModel> selector)
+                    => exerciseList.Where(x => x.UserId == id && x.ExerciseFilters.Any(x => filters.Contains(x.FilterId))).Select(selector).ToList());
+
+            var responseFactoryMock = new Mock<IResponseFactory>();
+
+            responseFactoryMock.Setup(x => x.CreateSuccess(It.IsAny<IEnumerable<ExerciseListItemModel>>(), ""))
+                    .Returns((IEnumerable<ExerciseListItemModel> data, string _)
+                        => new DataResponseModel<IEnumerable<ExerciseListItemModel>> { Success = true, Data = data });
+
+            var exerciseFactoryMock = new Mock<IExerciseFactory>();
+
+            exerciseFactoryMock.Setup(x => x.CreateListItem(It.IsAny<Exercise>()))
+                .Returns((Exercise exercise) => new ExerciseListItemModel
+                {
+                    Id = exercise.Id,
+                });
+
+            var service = new ExerciseService(repositoryMock.Object, responseFactoryMock.Object, exerciseFactoryMock.Object);
+            var request = new GetExerciseRequest
+            {
+                UserId = "id",
+                FilterIds = new int[] { 12 }
+            };
+
+            var res = service.GetExercisesWithFilter(request);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(res.Data.Count(),
+                    Is.EqualTo(exerciseList.Where(x => x.UserId == request.UserId 
+                    && x.ExerciseFilters.Any(x => request.FilterIds.Contains(x.FilterId))).Count()));
                 Assert.That(res.Success);
             });
         }

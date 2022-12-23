@@ -5,6 +5,7 @@
                 <tr>
                     <th class="has-text-centered">Name</th>
                     <th class="has-text-centered">Go to</th>
+                    <th></th>
                 </tr>
                 <tr v-for="exercise in exercises" :key="exercise.id">
                     <td class="has-text-centered is-vcentered">{{exercise.name}}</td>
@@ -13,6 +14,12 @@
                 </tr>
             </table>
             <button class="button is-success is-fullwidth" @click="router.push('/exercise/add')">Add exercise</button>
+        </div>
+        <div class="column is-2 mt-5">
+            <div class="field" v-for="filter in filters" :key="filter.id">
+                <input type="checkbox" :value="filter.id" :id="filter.id" v-model="usedFilters" @change="get">
+                <label :for="filter.id">{{ filter.name }}</label>
+            </div>
         </div>
     </div>
 </template>
@@ -33,8 +40,20 @@ if(!authStore.authorized){
 }
 
 const exercises = ref([])
+const filters = ref([])
 
+fetchStore.get('exercise-filter', res => filters.value = res.data)
 fetchStore.get('exercise/user/' + authStore.userId, res => exercises.value = res.data)
+
+const usedFilters = ref([])
+
+function get(){
+    if(usedFilters.value.length > 0){
+        fetchStore.getWithParams('exercise/filter', { userId: authStore.userId, filterIds: usedFilters.value }, res => exercises.value = res.data)
+    } else {
+        fetchStore.get('exercise/user/' + authStore.userId, res => exercises.value = res.data)
+    }
+}
 
 function remove(id){
     fetchStore.delete('exercise/' + id)
@@ -42,3 +61,9 @@ function remove(id){
 }
 
 </script>
+
+<style scoped>
+    input{
+        margin-right: 5px;
+    }
+</style>

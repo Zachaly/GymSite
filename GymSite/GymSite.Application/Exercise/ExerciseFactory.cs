@@ -48,7 +48,8 @@ namespace GymSite.Application
                     Reps = record.Reps,
                     Weight = record.Weight.ToString()
                 }).ToList(),
-                Removable = !exercise.Default
+                Removable = !exercise.Default,
+                Filters = exercise.ExerciseFilters.Select(filter => filter.Filter.Name)
             };
     }
 }

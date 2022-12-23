@@ -9,5 +9,6 @@
         public ApplicationUser? User { get; set; }
         public ICollection<ExerciseRecord> Records { get; set; }
         public bool Default { get; set; }
+        public ICollection<ExerciseExerciseFilter> ExerciseFilters { get; set; }
     }
 }

@@ -13,11 +13,20 @@ namespace GymSite.Database.Repository
             _dbContext = dbContext;
         }
 
-        public Task AddExerciseAsync(Exercise exercise)
+        public async Task AddExerciseAsync(Exercise exercise, IEnumerable<int> filterIds)
         {
             _dbContext.Exercise.Add(exercise);
+            await _dbContext.SaveChangesAsync();
+            if (filterIds.Any())
+            {
+                _dbContext.ExerciseExerciseFilter.AddRange(filterIds.Select(x => new ExerciseExerciseFilter
+                {
+                    ExerciseId = exercise.Id,
+                    FilterId = x
+                }));
+            }
 
-            return _dbContext.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync();
         }
 
         public IEnumerable<T> GetDefaultExercises<T>(Func<Exercise, T> selector)
@@ -28,6 +37,8 @@ namespace GymSite.Database.Repository
         public T GetExerciseById<T>(int id, Func<Exercise, T> selector)
             => _dbContext.Exercise
                 .Include(exercise => exercise.Records)
+                .Include(exercise => exercise.ExerciseFilters)
+                .ThenInclude(filter => filter.Filter)
                 .Where(exercise => exercise.Id == id)
                 .Select(selector)
                 .FirstOrDefault();
@@ -35,6 +46,15 @@ namespace GymSite.Database.Repository
         public IEnumerable<T> GetExercisesByUserIdWithDefaults<T>(string userId, Func<Exercise, T> selector)
             => _dbContext.Exercise
                 .Where(exercise => exercise.UserId == userId || exercise.Default)
+                .Select(selector);
+
+        public IEnumerable<T> GetExercisesWithFilter<T>(string userId, IEnumerable<int> filterIds, Func<Exercise, T> selector)
+            => _dbContext.Exercise
+                .Include(exercise => exercise.ExerciseFilters)
+                .AsEnumerable()
+                .Where(exercise => exercise.ExerciseFilters.Count() > 0 &&
+                    filterIds.All(id => exercise.ExerciseFilters.Any(filter => filter.FilterId == id))
+                    && (exercise.UserId == userId || exercise.Default))
                 .Select(selector);
 
         public Task RemoveExerciseByIdAsync(int id)

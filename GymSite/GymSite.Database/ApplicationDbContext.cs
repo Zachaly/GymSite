@@ -8,6 +8,8 @@ namespace GymSite.Database
         public DbSet<UserInfo> UserInfo { get; set; }
         public DbSet<Exercise> Exercise { get; set; }
         public DbSet<ExerciseRecord> ExerciseRecord { get; set; }
+        public DbSet<ExerciseFilter> ExerciseFilter { get; set; }
+        public DbSet<ExerciseExerciseFilter> ExerciseExerciseFilter { get; set; }
 
         public ApplicationDbContext(DbContextOptions options) : base(options)
         {
@@ -37,6 +39,9 @@ namespace GymSite.Database
                 .HasMany(user => user.ExerciseRecords)
                 .WithOne(record => record.User)
                 .HasForeignKey(record => record.UserId);
+
+            builder.Entity<ExerciseExerciseFilter>()
+                .HasKey(filter => new { filter.ExerciseId, filter.FilterId });
         }
     }
 }

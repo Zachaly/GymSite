@@ -13,6 +13,25 @@ export const useFetchStore = defineStore('fetch', () => {
 
     const authHeaders = () => ({ 'Authorization': `Bearer ${token.value}` })
 
+    function getWithParams(path, data, handler){
+        const params = new URLSearchParams()
+
+        Object.entries(data).forEach(([key, value]) => {
+            if (Array.isArray(value)) {
+                value.forEach(value => params.append(key, value.toString()))
+            } else {
+                params.append(key, value.toString())
+            }
+        });
+
+        return fetch(apiPath + path + '?' + params, {
+            headers: authHeaders()
+        }).then(r => r.json())
+        .then(json => {
+            handler(json)
+        }).catch(error => console.log(error))
+    }
+
     function get(path, handler) {
         return fetch(apiPath + path, {
             headers: authHeaders()
@@ -67,5 +86,5 @@ export const useFetchStore = defineStore('fetch', () => {
         }).catch(error => console.log(error))
     }
 
-    return { get, post, postNoContent, put, delete: del, putNoContent, token }
+    return { get, post, postNoContent, put, delete: del, putNoContent, token, getWithParams }
 })
