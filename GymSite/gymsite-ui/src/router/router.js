@@ -1,5 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
+const path = (route, name, component) => ({ path: route, name, component: () => import(`@/views/${component}.vue`)})
+
 const routes = [
     {
         path: '/',
@@ -45,7 +47,10 @@ const routes = [
         path: '/exercise/add',
         name: 'add-exercise',
         component: () => import('@/views/AddExerciseView.vue')
-    }
+    },
+    path('/workout', 'workout-list', 'WorkoutListView'),
+    path('/workout/add', 'add-workout', 'AddWorkoutView'),
+    path('/workout/:id', 'workout', 'WorkoutView'),
 ]
 
 export default createRouter({

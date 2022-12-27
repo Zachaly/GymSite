@@ -8,6 +8,7 @@
                 <div v-else class="navbar-start">
                     <router-link to="/" class="navbar-item">Home</router-link>
                     <router-link to="/exercise" class="navbar-item">Exercises</router-link>
+                    <router-link to="/workout" class="navbar-item">Workouts</router-link>
                 </div>
                 <div v-if="!authStore.authorized" class="navbar-end" >
                     <router-link to="/login" class="navbar-item">Login</router-link>
