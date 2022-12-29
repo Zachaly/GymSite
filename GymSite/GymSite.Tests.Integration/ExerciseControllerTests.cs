@@ -139,7 +139,7 @@ namespace GymSite.Tests.Integration
             var request = new AddExerciseRequest
             {
                 Description = "desc",
-                Name = "name",
+                Name = "ex name",
                 UserId = GetAuthenticatedUser().Id,
                 FilterIds = new List<int>()
             };
@@ -147,7 +147,7 @@ namespace GymSite.Tests.Integration
             var response = await _httpClient.PostAsJsonAsync("api/exercise", request);
 
             Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
-            Assert.Contains(GetFromDatabase<Exercise>(), x => x.Name== "name");
+            Assert.Contains(GetFromDatabase<Exercise>(), x => x.Name== request.Name);
         }
 
         [Fact]
@@ -286,7 +286,7 @@ namespace GymSite.Tests.Integration
             var request = new AddExerciseRequest
             {
                 Description = "desc",
-                Name = "name",
+                Name = "ex name",
                 UserId = "id",
                 FilterIds = new List<int>()
             };

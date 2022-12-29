@@ -4,6 +4,7 @@ using GymSite.Domain.Utils;
 using GymSite.Models.Response;
 using GymSite.Models.Workout;
 using GymSite.Models.Workout.Requests;
+using GymSite.Models.Workout.Validator;
 
 namespace GymSite.Application
 {
@@ -24,6 +25,13 @@ namespace GymSite.Application
 
         public async Task<DataResponseModel<ExerciseSetModel>> AddExerciseSetAsync(AddExerciseSetRequest request)
         {
+            var validation = new AddExerciseSetValidator().Validate(request);
+
+            if(!validation.IsValid)
+            {
+                return _responseFactory.CreateFail<ExerciseSetModel>("", validation.GetValidationErrors());
+            }
+
             var set = _exerciseSetFactory.Create(request);
 
             await _exerciseSetRepository.AddExerciseSetAsync(set);

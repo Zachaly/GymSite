@@ -34,7 +34,7 @@ namespace GymSite.Tests.Unit.Service
 
             var service = new ExerciseRecordService(responseFactoryMock.Object, repositoryMock.Object, factoryMock.Object);
 
-            var request = new AddExerciseRecordRequest { Reps = 1 };
+            var request = new AddExerciseRecordRequest { Reps = 1, UserId = "id", ExerciseId = 2, Weight = 3 };
 
             var res = await service.AddRecord(request);
 

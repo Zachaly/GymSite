@@ -3,6 +3,7 @@ using GymSite.Database.Repository.Abstractions;
 using GymSite.Domain.Utils;
 using GymSite.Models.Exercise;
 using GymSite.Models.Exercise.Request;
+using GymSite.Models.Exercise.Validator;
 using GymSite.Models.Response;
 
 namespace GymSite.Application
@@ -25,6 +26,13 @@ namespace GymSite.Application
 
         public async Task<ResponseModel> AddDefaultExercise(AddExerciseRequest request)
         {
+            var validation = new AddExerciseValidator().Validate(request);
+
+            if(!validation.IsValid)
+            {
+                return _responseFactory.CreateFail("", validation.GetValidationErrors());
+            }
+
             var exercise = _exerciseFactory.CreateDefault(request);
 
             await _exerciseRepository.AddExerciseAsync(exercise, request.FilterIds);
@@ -34,6 +42,13 @@ namespace GymSite.Application
 
         public async Task<ResponseModel> AddExercise(AddExerciseRequest request)
         {
+            var validation = new AddExerciseValidator().Validate(request);
+
+            if (!validation.IsValid)
+            {
+                return _responseFactory.CreateFail("", validation.GetValidationErrors());
+            }
+
             var exercise = _exerciseFactory.Create(request);
 
             await _exerciseRepository.AddExerciseAsync(exercise, request.FilterIds ?? new int[] { });

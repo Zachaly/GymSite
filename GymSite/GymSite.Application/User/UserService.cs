@@ -5,6 +5,7 @@ using GymSite.Domain.Utils;
 using GymSite.Models.Response;
 using GymSite.Models.User;
 using GymSite.Models.User.Request;
+using GymSite.Models.User.Validator;
 using Microsoft.AspNetCore.Identity;
 
 namespace GymSite.Application
@@ -33,6 +34,13 @@ namespace GymSite.Application
 
         public async Task<ResponseModel> AddUser(AddUserRequest request)
         {
+            var validation = new AddUserValidator().Validate(request);
+
+            if (!validation.IsValid)
+            {
+                return _responseFactory.CreateFail("", validation.GetValidationErrors());
+            }
+
             try
             {
                 var user = _userFactory.Create(request);

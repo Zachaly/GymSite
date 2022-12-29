@@ -18,7 +18,7 @@ namespace GymSite.Tests.Integration
             {
                 Email = "email@email.com",
                 FirstName = "fname",
-                NickName = "nick",
+                NickName = "nickname",
                 LastName = "lname",
                 Gender = Gender.Male,
                 Username = "username",

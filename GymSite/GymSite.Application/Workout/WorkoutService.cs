@@ -4,6 +4,7 @@ using GymSite.Domain.Utils;
 using GymSite.Models.Response;
 using GymSite.Models.Workout;
 using GymSite.Models.Workout.Requests;
+using GymSite.Models.Workout.Validator;
 
 namespace GymSite.Application
 {
@@ -24,6 +25,13 @@ namespace GymSite.Application
 
         public async Task<ResponseModel> AddWorkoutAsync(AddWorkoutRequest request)
         {
+            var validation = new AddWorkoutValidator().Validate(request);
+
+            if(!validation.IsValid)
+            {
+                return _responseFactory.CreateFail("", validation.GetValidationErrors());
+            }
+
             var workout = _workoutFactory.Create(request);
 
             await _workoutRepository.AddWorkoutAsync(workout);
@@ -65,6 +73,13 @@ namespace GymSite.Application
 
         public async Task<ResponseModel> UpdateWorkoutAsync(UpdateWorkoutRequest request)
         {
+            var validation = new UpdateWorkoutValidator().Validate(request);
+
+            if (!validation.IsValid)
+            {
+                return _responseFactory.CreateFail("", validation.GetValidationErrors());
+            }
+
             try
             {
                 var workout = _workoutRepository.GetWorkoutById(request.Id, x => x);

@@ -3,6 +3,7 @@ using GymSite.Database.Repository.Abstractions;
 using GymSite.Domain.Utils;
 using GymSite.Models.Record;
 using GymSite.Models.Record.Request;
+using GymSite.Models.Record.Validator;
 using GymSite.Models.Response;
 
 namespace GymSite.Application
@@ -24,6 +25,13 @@ namespace GymSite.Application
 
         public async Task<DataResponseModel<ExerciseRecordModel>> AddRecord(AddExerciseRecordRequest request)
         {
+            var validation = new AddExerciseRecordValidator().Validate(request);
+
+            if(!validation.IsValid)
+            {
+                return _responseFactory.CreateFail<ExerciseRecordModel>("", validation.GetValidationErrors());
+            }
+
             var record = _exerciseRecordFactory.Create(request);
 
             await _exerciseRecordRepository.AddRecordAsync(record);

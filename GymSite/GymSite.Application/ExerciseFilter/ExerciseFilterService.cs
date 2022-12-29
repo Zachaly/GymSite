@@ -3,6 +3,7 @@ using GymSite.Database.Repository.Abstractions;
 using GymSite.Domain.Utils;
 using GymSite.Models.ExerciseFilter;
 using GymSite.Models.ExerciseFilter.Request;
+using GymSite.Models.ExerciseFilter.Validator;
 using GymSite.Models.Response;
 using System;
 using System.Collections.Generic;
@@ -29,6 +30,13 @@ namespace GymSite.Application
 
         public async Task<DataResponseModel<ExerciseFilterModel>> AddFilter(AddFilterRequest request)
         {
+            var validation = new AddFilterValidator().Validate(request);
+
+            if(!validation.IsValid)
+            {
+                return _responseFactory.CreateFail<ExerciseFilterModel>("", validation.GetValidationErrors());
+            }
+
             try
             {
                 var filter = _exerciseFilterFactory.Create(request);

@@ -40,7 +40,7 @@ namespace GymSite.Tests.Unit.Service
             var request = new AddExerciseRequest
             {
                 Description = "desc",
-                Name = "name",
+                Name = "ex name",
                 UserId = "userId",
             };
 
@@ -82,7 +82,7 @@ namespace GymSite.Tests.Unit.Service
             var request = new AddExerciseRequest
             {
                 Description = "desc",
-                Name = "name",
+                Name = "ex name",
                 UserId = "userId",
             };
 
