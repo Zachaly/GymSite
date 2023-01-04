@@ -15,6 +15,8 @@ const routes = [
     path('workout', 'workout-list', 'WorkoutList'),
     path('workout/add', 'add-workout', 'AddWorkout'),
     path('workout/:id', 'workout', 'Workout'),
+    path('article/add', 'add-article', 'AddArticle'),
+    path('article/:id', 'article', 'Article')
 ]
 
 export default createRouter({

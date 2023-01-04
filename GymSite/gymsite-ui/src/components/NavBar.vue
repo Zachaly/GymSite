@@ -9,6 +9,7 @@
                     <router-link to="/" class="navbar-item">Home</router-link>
                     <router-link to="/exercise" class="navbar-item">Exercises</router-link>
                     <router-link to="/workout" class="navbar-item">Workouts</router-link>
+                    <router-link to="/article/add" class="navbar-item">Add article</router-link>
                 </div>
                 <div v-if="!authStore.authorized" class="navbar-end" >
                     <router-link to="/login" class="navbar-item">Login</router-link>

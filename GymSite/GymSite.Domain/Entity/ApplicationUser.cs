@@ -11,5 +11,6 @@ namespace GymSite.Domain.Entity
         public ICollection<Exercise> Exercises { get; set; }
         public ICollection<ExerciseRecord> ExerciseRecords { get; set; }
         public ICollection<Workout> Workouts { get; set; }
+        public ICollection<Article> Articles { get; set; }
     }
 }

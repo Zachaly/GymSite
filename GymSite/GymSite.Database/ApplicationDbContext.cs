@@ -13,6 +13,7 @@ namespace GymSite.Database
         public DbSet<Workout> Workout { get; set; }
         public DbSet<WorkoutExercise> WorkoutExercise { get; set; }
         public DbSet<ExerciseSet> ExerciseSet { get; set; }
+        public DbSet<Article> Article { get; set; }
 
         public ApplicationDbContext(DbContextOptions options) : base(options)
         {
